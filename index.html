@@ -139,6 +139,16 @@ window.dash = (() => {
 .pa-chip[aria-pressed="true"] { background:var(--ink); color:var(--sand); border-color:var(--ink); }
 .pa-chip[disabled] { opacity:.45; cursor:not-allowed; }
 .pa-btn { cursor:pointer; border:1.5px solid var(--ink); border-radius:999px; padding:4px 12px; background:var(--yellow); color:var(--ink); font:700 12px var(--font-anthropic-sans); }
+.pa-ask { grid-column:1/-1; }
+.pa-ask form { display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 10px; }
+.pa-ask input { flex:1 1 240px; min-width:0; border:1.5px solid var(--ink); border-radius:999px; padding:8px 14px; background:#fff; color:#141413; font:14px var(--font-anthropic-sans); }
+.pa-ask .pa-btn { padding:8px 16px; font-size:13px; }
+.pa-ask .pa-chip { font-weight:500; }
+.pa-ans { font-size:14px; line-height:1.5; background:rgba(255,255,255,.55); border-radius:14px; padding:12px 14px; margin-top:4px; }
+.pa-ans:empty { display:none; }
+.pa-ans p { margin:0 0 6px; } .pa-ans p:last-child { margin:0; }
+.pa-ans ul { margin:4px 0 0; padding-left:18px; }
+.pa-ans .q { font-size:12px; opacity:.7; margin-bottom:6px; }
 .pa-ctrl { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px; font-size:12px; }
 .pa-ctrl input[type=date] { border:1.5px solid var(--ink); border-radius:10px; padding:3px 6px; background:#fff; color:var(--ink); font:12px var(--font-anthropic-sans); }
 .pa-chart { width:100%; min-height:240px; position:relative; }
@@ -244,6 +254,13 @@ window.dash = (() => {
         <p class="pa-k">Falta para abrir o Portal</p>
         <div class="pa-count" data-draw="contagem" aria-live="polite">—</div>
         <p class="pa-note">26/12, 16h · Tikal Praia Bar, Algodões</p>
+      </div>
+      <div class="pa-card pa-ask" id="perguntas">
+        <p class="pa-k">Pergunte ao painel</p>
+        <form id="q-form" autocomplete="off"><input id="q-in" type="text" placeholder="Ex.: quanto vendemos essa semana?" aria-label="Sua pergunta"><button class="pa-btn" type="submit">Perguntar</button></form>
+        <div class="pa-chips" id="q-sug" role="group" aria-label="Perguntas sugeridas"></div>
+        <div class="pa-ans" id="q-out" aria-live="polite"></div>
+        <p class="pa-note">Respostas calculadas na hora com os dados deste painel, sem IA. Entende perguntas sobre vendas por período, metas, ritmo, comparação com outros anos, SAC, embaixadores (pelo nome), sócios, estrangeiros, recorrência, anúncios, lotes, barcos, público, reembolsos e perfil do público.</p>
       </div>
     </div>
 
@@ -1108,6 +1125,201 @@ sacDraw('ch_sac_qtd', 'qtd', fmtN); sacDraw('ch_sac_rec', 'receita', fmtR);
 tipoDraw('ch_esac_qtd', 'Embaixador SAC', 'esac', 'qtd', fmtN); tipoDraw('ch_esac_rec', 'Embaixador SAC', 'esac', 'receita', fmtR);
 dash.draw('ch_socio', (el) => { const d = dash.data('socio_share'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
   PACH.hbars(el, d.data.map((r) => ({ k: r.socio, v: Number(r.pct), lab: `${PA.pct(r.pct)} · ${PA.num(r.qtd)}`, extra: [PA.brl(r.receita)] })), { fmt: PA.pct, label: 'Parte de cada sócio', colorOf: (r) => r.k.includes('SAC') ? '#607F37' : '#1E6BD6' }); });
+// ---------- Pergunte ao painel (sem IA: regras sobre os dados carregados) ----------
+(() => {
+  const form = document.getElementById('q-form'); if (!form) return;
+  const inp = document.getElementById('q-in'), out = document.getElementById('q-out'), sug = document.getElementById('q-sug');
+  const MAIN = ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'];
+  const N = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const D = (id) => { const d = dash.data(id); return d && d.status === 'ok' ? d.data : null; };
+  const sum = (rows, k) => rows.reduce((a, r) => a + Number(r[k] || 0), 0);
+  const { brl, brlK, num, pct } = PA;
+  const dayMs = 864e5;
+  const isoBA = (t) => new Date(t - 3 * 36e5).toISOString().slice(0, 10);
+  const hoje = () => isoBA(Date.now());
+  const addDias = (iso, n) => new Date(Date.parse(iso + 'T12:00:00Z') + n * dayMs).toISOString().slice(0, 10);
+  const br = (iso) => iso.slice(8, 10) + '/' + iso.slice(5, 7);
+  const diaVenda = () => Math.floor((Date.now() - Date.parse('2026-05-09T03:00:00Z')) / dayMs) + 1;
+  const has = (q, re) => re.test(q);
+  const ul = (items) => '<ul>' + items.map((x) => '<li>' + x + '</li>').join('') + '</ul>';
+  const P = (t) => '<p>' + t + '</p>';
+
+  // período citado na pergunta
+  const periodo = (q) => {
+    const h = hoje();
+    const ds = [...q.matchAll(/\b(\d{1,2})\/(\d{1,2})\b/g)].map((m) => {
+      const mm = Number(m[2]), dd = Number(m[1]); const ano = mm >= 5 ? 2026 : 2027;
+      return `${ano}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`; });
+    if (ds.length >= 2 && !/barco/.test(q)) return { ini: ds[0], fim: ds[1], label: `de ${br(ds[0])} a ${br(ds[1])}` };
+    if (ds.length === 1 && !/barco|festa|publico|dia 2[6-9]|dia 3[01]/.test(q) && ds[0] <= h) return { ini: ds[0], fim: ds[0], label: `em ${br(ds[0])}` };
+    if (/\bhoje\b/.test(q)) return { ini: h, fim: h, label: 'hoje' };
+    if (/\bontem\b/.test(q)) { const o = addDias(h, -1); return { ini: o, fim: o, label: `ontem (${br(o)})` }; }
+    const m = q.match(/ultim[oa]s? (\d{1,3}) dias/); if (m) return { ini: addDias(h, -(Number(m[1]) - 1)), fim: h, label: `nos últimos ${m[1]} dias` };
+    if (/semana passada/.test(q)) { const f = addDias(h, -7); return { ini: addDias(f, -6), fim: f, label: `na semana anterior (${br(addDias(f, -6))} a ${br(f)})` }; }
+    if (/semana/.test(q)) return { ini: addDias(h, -6), fim: h, label: 'nos últimos 7 dias' };
+    if (/mes passado/.test(q)) { const d = new Date(Date.parse(h.slice(0, 7) + '-01T12:00:00Z')); d.setUTCMonth(d.getUTCMonth() - 1); const ini = d.toISOString().slice(0, 10); const fim = addDias(h.slice(0, 7) + '-01', -1); return { ini, fim, label: 'no mês passado' }; }
+    if (/\b(esse|este|neste|nesse) mes\b|\bno mes\b/.test(q)) return { ini: h.slice(0, 7) + '-01', fim: h, label: 'neste mês' };
+    return null;
+  };
+
+  const R = []; // regras: [teste, resposta]
+  const regra = (re, fn) => R.push([re, fn]);
+
+  // vendas num período
+  const vendasPeriodo = (q, p) => {
+    const vd = D('vendas_dia'); if (!vd) return null;
+    const rows = vd.filter((r) => r.data >= p.ini && r.data <= p.fim);
+    const prin = rows.filter((r) => r.grupo === 'Principal');
+    const qp = sum(prin, 'qtd'), rp = sum(prin, 'receita'), qo = sum(rows, 'qtd') - qp, ro = sum(rows, 'receita') - rp;
+    if (!rows.length) return P(`Nenhuma venda registrada ${p.label}.`);
+    const porProd = MAIN.map((m) => [m, sum(prin.filter((r) => r.produto === m), 'qtd')]).filter((x) => x[1]);
+    let h = P(`${p.label[0].toUpperCase() + p.label.slice(1)}: <b>${num(qp)} ingressos principais</b> (${brl(rp)})` + (qo ? ` e mais ${num(qo)} de barco/dia avulso (${brl(ro)}).` : '.'));
+    if (porProd.length > 1) h += ul(porProd.map(([m, v]) => `${m}: ${num(v)}`));
+    if (p.ini !== p.fim) {
+      const dias = Math.round((Date.parse(p.fim) - Date.parse(p.ini)) / dayMs) + 1;
+      const best = Object.entries(prin.reduce((a, r) => (a[r.data] = (a[r.data] || 0) + Number(r.qtd), a), {})).sort((a, b) => b[1] - a[1])[0];
+      h += P(`Média de ${(qp / dias).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} por dia` + (best ? `; melhor dia ${br(best[0])}, com ${num(best[1])}.` : '.'));
+    }
+    return h;
+  };
+
+  // comparação com outros anos
+  const comparar = (q) => {
+    const k = D('kpi')?.[0], hd = D('hist_dia'); if (!k || !hd) return null;
+    const dia = diaVenda();
+    const canal = /embaixador(es)? sac|emb sac/.test(q) ? 'Embaixador SAC' : /\bsac\b/.test(q) ? 'SAC' : /embaixador/.test(q) ? 'Embaixador' : /socio/.test(q) ? 'Sócio' : null;
+    let anos = [2026, 2025, 2024].filter((a) => q.includes(String(a)));
+    if (/ano passado|edicao passada|ultimo ano/.test(q)) anos = [2026];
+    if (!anos.length) anos = [2026, 2025, 2024];
+    if (canal) {
+      const cc = D('canal_cmp'); if (!cc) return null;
+      const g = (a) => cc.filter((r) => r.canal === canal && Number(r.ano) === a);
+      const at = g(2027); const qa = sum(at, 'qtd'), ra = sum(at, 'receita');
+      return P(`<b>${canal}</b> até o dia ${dia} de venda: 2027 tem <b>${num(qa)} ingressos</b> (${brlK(ra)}).`) + ul(anos.map((a) => { const x = g(a), qx = sum(x, 'qtd'); if (!x.length) return `${a}: sem esse canal separado`;
+        return `${a}: ${num(qx)} ingressos (${brlK(sum(x, 'receita'))}) → 2027 está ${qa >= qx ? '+' : ''}${num(qa - qx)} (${qx ? pct((qa - qx) / qx) : '—'})`; }));
+    }
+    const em = (a) => hd.filter((r) => Number(r.ano) === a && Number(r.dia_venda) <= dia).sort((x, y) => y.dia_venda - x.dia_venda)[0];
+    const qa = k.qtd_principais, ra = k.fat_principais;
+    return P(`No dia ${dia} de venda, 2027 tem <b>${num(qa)} ingressos principais</b> e <b>${brlK(ra)}</b>.`) + ul(anos.map((a) => { const r = em(a); if (!r) return `${a}: sem dado`;
+      const dq = qa - r.qtd_acum, dr = ra - r.receita_acum;
+      return `${a}: ${num(r.qtd_acum)} ingressos / ${brlK(r.receita_acum)} → 2027 está ${dq >= 0 ? '+' : ''}${num(dq)} ingressos (${pct(dq / r.qtd_acum)}) e ${dr >= 0 ? '+' : '−'}${brlK(Math.abs(dr))} (${pct(dr / r.receita_acum)})`; }));
+  };
+
+  // busca de nomes (embaixadores e sócios)
+  const STOP = new Set(['quanto', 'quantos', 'quantas', 'vendeu', 'vendas', 'venda', 'embaixador', 'embaixadora', 'embaixadores', 'socio', 'socios', 'ingressos', 'ingresso', 'passaporte', 'reveillon', 'combo', 'tikal', 'recorrencia', 'anuncio', 'artista', 'promoter', 'semana', 'hoje', 'total', 'quais', 'qual', 'melhor', 'maior', 'esta', 'estao', 'como']);
+  const nomes = (q) => {
+    const ve = D('vendas_embaixador') || [], vs = D('vendas_socio') || [];
+    const words = new Set(q.split(/[^a-z0-9]+/).filter((w) => w.length >= 4 && !STOP.has(w)));
+    const bate = (nome) => { const n = N(nome).replace(/\(.*?\)/g, '').trim(); if (n.length >= 4 && q.includes(n)) return 10 + n.length; return n.split(/\s+/).some((t) => t.length >= 4 && words.has(t)) ? 1 : 0; };
+    const socios = vs.filter((r) => !['Recorrência', 'Anúncio', 'Sem promoter'].includes(r.socio)).map((r) => [bate(r.socio), r]).filter((x) => x[0]);
+    const embs = ve.filter((r) => r.canal !== 'SAC' && r.canal !== 'SAC condição especial').map((r) => [bate(r.embaixador), r]).filter((x) => x[0]);
+    const top = Math.max(0, ...socios.map((x) => x[0]), ...embs.map((x) => x[0])); if (!top) return null;
+    const S = socios.filter((x) => x[0] === top).map((x) => x[1]), E = embs.filter((x) => x[0] === top).map((x) => x[1]);
+    const es = D('embaixadores_socio') || [];
+    let h = '';
+    const querSocio = /socio/.test(q);
+    S.forEach((r) => { const x = es.find((e) => N(e.socio).startsWith(N(r.socio).split(' ')[0]));
+      h += P(`<b>${esc(r.socio)}</b> (sócio): ${num(r.qtd)} ingressos principais, ${brl(r.receita)}.` + (x ? ` Tem ${num(x.cadastrados)} embaixadores cadastrados (${num(x.novos_30d)} ${x.novos_30d === 1 ? 'novo' : 'novos'} em 30 dias); vendas da rede: ${num(x.vendas_7d)} em 7 dias e ${num(x.vendas_30d)} em 30 dias.` : '')); });
+    if (!(querSocio && S.length)) E.slice(0, 6).forEach((r) => { h += P(`<b>${esc(r.embaixador)}</b> (${r.canal === 'Sócio' ? 'venda direta do sócio ' + esc(r.socio) : esc(r.canal === 'Embaixador SAC' ? 'embaixador SAC' : r.canal.toLowerCase()) + ', sócio ' + esc(r.socio)}): ${num(r.qtd)} ingressos principais, ${brl(r.receita)}.`); });
+    return h || null;
+  };
+
+  const comissao = () => {
+    const sk = D('sac_kpi'), ek = D('esac_kpi'), al = D('anuncios_links'); if (!sk || !ek || !al) return null;
+    const s = sk.at(-1).qtd, e = ek.at(-1).qtd, a = sum(al.filter((r) => r.comissionavel === 'Sim'), 'qtd'), t = s + e + a;
+    const faixa = t <= 130 ? 40 : t <= 210 ? 47 : t <= 250 ? 54 : t <= 310 ? 61 : t <= 350 ? 68 : 75;
+    const prox = [[130, 47], [210, 54], [250, 61], [310, 68], [350, 75]].find(([lim]) => t <= lim);
+    return P(`Ingressos comissionáveis do SAC: <b>${num(t)}</b> (SAC ${num(s)} + embaixadores SAC ${num(e)} + anúncios ${num(a)}). Faixa atual: ${brl(faixa)} por ingresso → <b>${brl(t * faixa)}</b>.`) +
+      (prox ? P(`Faltam ${num(prox[0] + 1 - t)} ingressos para a faixa de ${brl(prox[1])}.`) : P('Já está na faixa máxima.'));
+  };
+
+  regra(/comiss/, comissao);
+  regra(/compar|\b202[456]\b|ano passado|anos anteriores|edicao passada|ultimo ano|outros anos|mesmo dia/, comparar);
+  regra(/embaixador(es)? sac|emb sac|rede (da )?julia/, () => { const ek = D('esac_kpi'), ve = D('vendas_embaixador'); if (!ek || !ve) return null; const t = ek.at(-1);
+    const top = ve.filter((r) => r.canal === 'Embaixador SAC').sort((a, b) => b.qtd - a.qtd);
+    return P(`Embaixadores SAC: <b>${num(t.qtd)} ingressos</b>, ${brl(t.receita)}.`) + ul(top.slice(0, 8).map((r) => `${esc(r.embaixador)}: ${num(r.qtd)}`)); });
+  regra(/\bsac\b|atendimento/, () => { const sk = D('sac_kpi'), cs = D('canal_share'); if (!sk) return null; const t = sk.at(-1);
+    const parte = cs ? sum(cs.filter((r) => r.canal.startsWith('SAC')), 'pct') : null;
+    return P(`SAC: <b>${num(t.qtd)} ingressos principais</b>, ${brl(t.receita)}` + (parte != null ? ` (${pct(parte)} do total).` : '.')) + ul(sk.slice(0, 3).filter((r) => r.qtd).map((r) => `${r.produto}: ${num(r.qtd)} (${brlK(r.receita)})`)) + P('Pergunte "SAC comparado com 2026" para ver os outros anos, ou "comissão SAC".'); });
+  regra(/socio/, () => { const vs = D('socio_share'); if (!vs) return null;
+    return P('Ingressos principais por sócio:') + ul(vs.slice().sort((a, b) => b.qtd - a.qtd).map((r) => `${esc(r.socio)}: ${num(r.qtd)} (${pct(r.pct)}) · ${brlK(r.receita)}`)); });
+  regra(/embaixador|ranking|quem (mais )?vend|top/, () => { const ve = D('vendas_embaixador'), ea = D('emb_anos'); if (!ve) return null;
+    const emb = ve.filter((r) => r.canal === 'Embaixador').sort((a, b) => b.qtd - a.qtd);
+    const at = ea?.find((r) => Number(r.ano) === 2027);
+    return P(`Embaixadores: <b>${num(sum(emb, 'qtd'))} ingressos</b> (${brlK(sum(emb, 'receita'))}) com ${num(emb.filter((r) => r.qtd > 0).length)} embaixadores com venda` + (at ? `; ${at.por_ativo.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} vendas por ativo.` : '.')) +
+      P('Quem mais vendeu:') + ul(emb.slice(0, 8).map((r) => `${esc(r.embaixador)} (${esc(r.socio)}): ${num(r.qtd)}`)); });
+  regra(/estrangeir|gringo|pais(es)?\b|internaciona|fora do brasil|exterior/, () => { const g = D('gringos'), pa = D('paises'), he = D('hist_estrangeiros'); if (!g) return null;
+    const e = g.find((r) => r.origem === 'Estrangeiro') || { qtd: 0, pct: 0, receita: 0 };
+    return P(`Estrangeiros: <b>${num(e.qtd)} ingressos principais</b> (${pct(e.pct)} do total), ${brlK(e.receita)}.`) +
+      (pa ? P('Países: ' + pa.filter((r) => r.pais !== 'Brazil').slice(0, 6).map((r) => `${esc(r.pais)} ${num(r.qtd)}`).join(' · ')) : '') +
+      (he ? P('Edições anteriores: ' + he.map((r) => `${r.ano}: ${num(r.estrangeiros)} (${pct(r.estrangeiros / r.total)})`).join(' · ')) : ''); });
+  regra(/recorren|retenc|retid|recompra|voltaram|voltou|fideliz/, () => { const rc = D('recorrencia')?.[0], m = D('rec_metas'); if (!rc) return null;
+    return P(`Recorrência: <b>${num(rc.retidos)} clientes</b> de 2024–2026 compraram de novo (${pct(rc.taxa)} de uma base de ${num(rc.base)}).`) + (m ? ul(m.map((x) => `Meta ${pct(x.taxa)} (${num(x.clientes)}): ${x.faltam ? 'faltam ' + num(x.faltam) : 'atingida ✓'}`)) : ''); });
+  regra(/anunci|\bads\b|meta ads|\broi\b|roas|trafego|pixel|investi|roberto/, () => { const a = D('ads_kpi')?.[0], r = D('ads_roi'); if (!a) return null;
+    return P(`Anúncios: investimento de ${brl(a.investido_bruto)}. Links ADS na Shotgun: <b>${num(a.qtd_links)} ingressos</b>, ${brl(a.receita_links)}. Pixel da Meta atribui ${num(a.compras_pixel)} compras e ${brl(a.receita_pixel)}.`) +
+      (r ? ul(r.map((x) => `${x.base}: ROI ${x.roi.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}x · ROAS ${x.roas.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}x`)) : ''); });
+  regra(/instagram|insta\b|seguidor|visualiza|alcance|engaj/, () => { const ig = D('instagram'); if (!ig) return null;
+    return P(`Instagram (${esc(ig[0]?.periodo || '')}):`) + ul(ig.slice(0, 8).map((r) => `${esc(r.metrica)}: ${num(r.valor)}` + (r.variacao_pct != null ? ` (${r.variacao_pct >= 0 ? '+' : ''}${Number(r.variacao_pct).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%)` : ''))); });
+  regra(/\blotes?\b|virar|virada/, () => { const l = D('lotes'); if (!l) return null;
+    const atual = MAIN.map((m) => l.filter((r) => r.produto === m && r.falta > 0 && r.vendido > 0).sort((a, b) => b.ordem - a.ordem)[0] || l.filter((r) => r.produto === m && r.falta > 0)[0]).filter(Boolean);
+    return P('Lote atual de cada ingresso:') + ul(atual.map((r) => `${r.produto}, ${esc(r.lote)}: ${num(r.vendido)} de ${num(r.meta)} → faltam <b>${num(r.falta)}</b> para virar`)); });
+  regra(/barco/, (q) => { const b = D('barcos'); if (!b) return null; const dm = q.match(/(\d{1,2})\/12/);
+    const rows = dm ? b.filter((r) => r.barco.includes(dm[1].padStart(2, '0') + '/12')) : b;
+    if (!rows.length) return P(`Ainda não há venda do barco de ${dm[1]}/12.`);
+    return ul(rows.map((r) => `<b>${esc(r.barco)}</b>: ${num(r.ingressos_barco)} ingressos (${num(r.com_passaporte)} de quem tem passaporte, ${num(r.com_combo)} com combo, ${num(r.sem_cruzamento)} sem ingresso principal)`)); });
+  regra(/publico|lotacao|quantas pessoas|gente por dia|cada dia|festa|dia 2[6-9]|dia 3[01]|dia 0?[12]\b/, () => { const pd = D('publico_dia'); if (!pd) return null;
+    return P('Público esperado por dia (passaportes + ingressos do dia + barco):') + ul(pd.map((r) => `${r.dia} · ${esc(r.festa)}: <b>${num(r.passaporte + r.ingressos_do_dia)}</b>` + (r.barco ? ` (+${num(r.barco)} no barco)` : ''))); });
+  regra(/reembols|cancel|revend|devolv|estorn/, () => { const c = D('cancel_kpi'); if (!c) return null;
+    return ul(c.map((r) => `${r.status === 'Reembolsado' ? 'Reembolsados' : 'Revendidos'}: <b>${num(r.qtd)}</b> (${pct(r.pct)})` + (r.status === 'Reembolsado' ? `, ${brl(r.valor)} devolvidos` : ', sem perda de receita'))); });
+  regra(/genero|homens|mulheres|masculin|feminin/, () => { const g = D('genero'); if (!g) return null; const t = sum(g, 'qtd');
+    return ul(g.map((r) => `${esc(r.genero)}: ${num(r.qtd)} (${pct(r.qtd / t)})`)); });
+  regra(/idade|faixa etaria|velh|jove|anos de idade/, () => { const g = D('idade'); if (!g) return null; const t = sum(g, 'qtd');
+    return P('Idade dos compradores em 26/12:') + ul(g.slice().sort((a, b) => a.ordem - b.ordem).map((r) => `${esc(r.faixa)}: ${num(r.qtd)} (${pct(r.qtd / t)})`)); });
+  regra(/cidade/, () => { const g = D('cidades'); if (!g) return null; return P('Cidades com mais compradores:') + ul(g.slice(0, 8).map((r) => `${esc(r.cidade)}: ${num(r.qtd)}`)); });
+  regra(/estado|\buf\b|regiao/, () => { const g = D('estados'); if (!g) return null; return P('Estados com mais compradores:') + ul(g.slice(0, 8).map((r) => `${esc(r.estado)}: ${num(r.qtd)}`)); });
+  regra(/condic|desconto|especial|oferta/, () => { const c = D('condicoes_especiais'); if (!c) return null;
+    return P(`Condições especiais: ${num(sum(c, 'ofertas'))} ofertas, ${num(sum(c, 'converteram'))} viraram venda (${pct(sum(c, 'converteram') / (sum(c, 'ofertas') || 1))}).`); });
+  regra(/taxa/, () => { const t = D('taxas_kpi')?.[0], x = D('taxas')?.[0]; if (!t) return null;
+    return P(`Taxa da Shotgun paga pelos compradores: ${brl(x.taxa_comprador)}, ${pct(t.pct)} sobre o valor dos ingressos.`); });
+  regra(/lead|whatsapp|zap|contato/, () => { const l = D('leads'); if (!l) return null; return ul(l.map((r) => `${esc(r.metrica)}: ${num(r.valor)}`)); });
+  regra(/check.?in|entrada|leitura|scan/, () => P('O check-in só começa a contar a partir de 26/12, quando os ingressos forem lidos na entrada.'));
+  regra(/ritmo|projec|previs|por dia|media|vai esgotar|vamos esgotar|chegar|bater a meta|tendencia/, () => { const r = D('ritmo')?.[0]; if (!r) return null;
+    return P(`Faltam <b>${num(r.faltam)} ingressos</b> em ${num(r.dias)} dias: é preciso vender <b>${r.por_dia_necessario.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} por dia</b>. Na última semana a média foi ${r.media_7d.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} por dia (${num(r.vendidos_7d)} no total).`) +
+      P(`Nesse ritmo, o festival fecha com cerca de <b>${num(r.projecao)} ingressos principais</b> (meta: 1.242).`); });
+  regra(/ticket medio|preco medio|valor medio/, () => { const k = D('kpi')?.[0], cs = D('canal_share'); if (!k) return null;
+    return P(`Ticket médio dos ingressos principais: <b>${brl(k.ticket_medio)}</b> (meta ${brl(3148.89)}).`) + (cs ? ul(cs.map((r) => `${esc(r.canal)}: ${brl(r.ticket_medio)}`)) : ''); });
+  regra(/\bmeta\b|objetivo|alvo/, () => { const k = D('kpi')?.[0]; if (!k) return null;
+    return P(`Receita dos ingressos principais: <b>${brl(k.fat_principais)}</b>, ${pct(k.pct_meta_receita)} da meta de ${brl(3910917)} (faltam ${brlK(Math.max(0, 3910917 - k.fat_principais))}).`) +
+      P(`Ingressos: ${num(k.qtd_principais)} de 1.242 (${pct(k.pct_cap)}), faltam ${num(k.faltam)}. Ticket médio ${brl(k.ticket_medio)} (meta ${brl(3148.89)}).`); });
+  regra(/passaporte|reveillon|combo|avulso|\bd2\b|marcelo/, (q) => { const kp = D('kpi_prod'); if (!kp) return null;
+    const f = kp.filter((r) => (/passaporte/.test(q) && r.produto === 'Passaporte') || (/reveillon|avulso/.test(q) && !/combo|d2|marcelo/.test(q) && r.produto === 'Avulso Réveillon') || (/combo|d2|marcelo/.test(q) && r.produto.startsWith('Combo')));
+    return ul((f.length ? f : kp).map((r) => `<b>${r.produto}</b>: ${num(r.qtd)} ingressos, ${brl(r.receita)}`)); });
+  regra(/falta|faltam|restam|sobr|disponive|esgot|sold ?out|capacidade/, () => { const k = D('kpi')?.[0], r = D('ritmo')?.[0]; if (!k) return null;
+    return P(`Faltam <b>${num(k.faltam)} ingressos principais</b> para esgotar (${num(k.qtd_principais)} de 1.242 vendidos, ${pct(k.pct_cap)}).`) + (r ? P(`Para esgotar até 26/12 é preciso vender ${r.por_dia_necessario.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} por dia; a média da última semana é ${r.media_7d.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}.`) : ''); });
+  regra(/canal|canais|de onde|origem das vendas/, () => { const cs = D('canal_share'); if (!cs) return null;
+    return P('Ingressos principais por canal:') + ul(cs.map((r) => `${esc(r.canal)}: ${num(r.qtd)} (${pct(r.pct)}) · ${brlK(r.receita)}`)); });
+  regra(/fatur|receita|dinheiro|arrecad|grana|valor total|vendemos|vendeu|vendido|vendas|ingressos|quanto/, () => { const k = D('kpi')?.[0]; if (!k) return null;
+    return P(`Faturamento total: <b>${brl(k.fat_total)}</b> (Shotgun ${brlK(k.fat_shotgun)}, pix direto ${brlK(k.fat_pix)}).`) +
+      P(`${num(k.qtd_total)} ingressos no total, sendo <b>${num(k.qtd_principais)} principais</b> (passaporte, Réveillon e combo), que somam ${brl(k.fat_principais)}.`); });
+  regra(/quando|quantos dias|contagem|abre|comeca|falta pra|data do festival/, () => { const ms = Date.parse('2026-12-26T16:00:00-03:00') - Date.now();
+    return P(`O Portal abre em <b>${Math.max(0, Math.floor(ms / dayMs))} dias</b>: 26/12, às 16h, no Tikal Praia Bar.`); });
+
+  const SUG = ['Quanto vendemos essa semana?', 'Como estamos comparado com 2026?', 'SAC comparado com o ano passado', 'Vamos esgotar nesse ritmo?', 'Quem são os embaixadores que mais vendem?', 'Quanto falta para virar os lotes?', 'Comissão SAC'];
+  const responder = (texto) => {
+    const q = N(texto).trim(); if (!q) return;
+    if (!D('kpi')) { out.innerHTML = P('Os dados ainda estão carregando. Tente de novo em alguns segundos.'); return; }
+    let html = null;
+    const p = periodo(q);
+    if (p && /vend|ingress|receita|fatur|quant|como foi|resultado|movimento/.test(q) && !/compar|202[456]|ano passado/.test(q)) html = vendasPeriodo(q, p);
+    if (!html && !/comiss|compar|ranking|\btop\b/.test(q)) html = nomes(q);
+    if (!html) for (const [re, fn] of R) { if (re.test(q)) { html = fn(q); if (html) break; } }
+    if (!html && p) html = vendasPeriodo(q, p);
+    out.innerHTML = '<div class="q">“' + esc(texto.trim()) + '”</div>' + (html || P('Não encontrei essa informação nos dados do painel. Tente com outras palavras, por exemplo: "vendas de ontem", "estrangeiros", "recorrência", "barco 28/12", "Francisco Frondizi" ou "comparado com 2025".'));
+  };
+  sug.replaceChildren(...SUG.map((t) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pa-chip'; b.textContent = t; b.addEventListener('click', () => { inp.value = t; responder(t); }); return b; }));
+  form.addEventListener('submit', (e) => { e.preventDefault(); responder(inp.value); });
+})();
 </script>
 
 </div>
