@@ -24,7 +24,7 @@ jobs:
       - name: Baixar vendas da Shotgun
         run: python3 scripts/fetch_shotgun.py /tmp/tickets.json
         env:
-          SHOTGUN_TOKEN: ${{ secrets.SHOTGUN_TOKEN }}
+          SHOTGUN_TOKEN: ${{ secrets.SHOTGUN_TOKEN || secrets.SHOTGUN_TOKAN }}
       - name: Ler embaixadores (aba publicada "painel")
         run: |
           curl -sSL --fail -o /tmp/embaixadores.csv "https://docs.google.com/spreadsheets/d/e/2PACX-1vTHB3oK6qRFOyNiX-wPuZfyoACYUhO1T36g_UN8XaFtJFuYzpAQUPhdgBTCB2a4us0Z-mu_Psifd8BY/pub?gid=1830180648&single=true&output=csv" || echo "planilha de embaixadores indisponível; usando dados fixos"
