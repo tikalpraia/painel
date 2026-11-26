@@ -1,0 +1,49 @@
+name: Atualizar painel
+
+on:
+  schedule:
+    - cron: "58 11,19 * * *"   # 8h58 e 16h58 no horário da Bahia
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: atualizar-painel
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    env:
+      PAINEL_SENHA: ${{ secrets.PAINEL_SENHA }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet cryptography
+      - name: Baixar vendas da Shotgun
+        run: python3 scripts/fetch_shotgun.py /tmp/tickets.json
+        env:
+          SHOTGUN_TOKEN: ${{ secrets.SHOTGUN_TOKEN }}
+      - name: Ler embaixadores (aba publicada "painel")
+        run: |
+          curl -sSL --fail -o /tmp/embaixadores.csv "https://docs.google.com/spreadsheets/d/e/2PACX-1vTHB3oK6qRFOyNiX-wPuZfyoACYUhO1T36g_UN8XaFtJFuYzpAQUPhdgBTCB2a4us0Z-mu_Psifd8BY/pub?gid=1830180648&single=true&output=csv" || echo "planilha de embaixadores indisponível; usando dados fixos"
+      - name: Recalcular o painel
+        run: |
+          mkdir -p /tmp/out /tmp/sem_leads
+          echo '{"contatos_total":0,"anuncios_total":0,"condicoes":[]}' > /tmp/sem_leads/leads.json
+          python3 scripts/cofre.py abrir data/static.enc.json /tmp/static.json
+          python3 scripts/cofre.py abrir data/manual.enc.json /tmp/manual.json
+          python3 -I scripts/build.py /tmp/tickets.json /tmp/sem_leads /tmp/out /tmp/static.json "$SALT"
+          python3 -c "import json;[json.dump(v, open(f'/tmp/out/{k}.json','w'), ensure_ascii=False) for k, v in json.load(open('/tmp/manual.json')).items()]"
+          python3 -I scripts/bundle.py /tmp/out
+          python3 scripts/cofre.py fechar /tmp/out/bundle.json data/bundle.enc.json
+        env:
+          SALT: ${{ secrets.RECORRENCIA_SALT }}
+          FORM_CSV: /tmp/embaixadores.csv
+      - name: Publicar
+        run: |
+          git config user.name "Atualização automática"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/bundle.enc.json
+          git diff --cached --quiet || (git commit -m "Atualiza dados do painel" && git push)

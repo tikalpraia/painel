@@ -1,0 +1,1019 @@
+<meta name="dash-one-writer">
+<meta name="dash-form" content="dashboard">
+<style>
+/* Portal de Algodões — creme de areia, verde-oliva e blocos de cor da apresentação 2027; pílulas com contorno preto */
+#dash-root { --dash-gutter: 0; }
+.pa { --sand:#F2E3C9; --sand2:#EAD7B6; --ink:#161513; --ink2:#5b5346; --olive:#607F37; --blue:#1E6BD6; --purple:#6B4BA6; --coral:#EF6351; --yellow:#F2C94C; --sea:#1F8F7A;
+  --ok:#3f7d2c; --bad:#c2402f;
+  background:var(--sand); color:var(--ink); font-family:var(--font-anthropic-sans); padding:20px max(16px,3vw) 40px; }
+.pa * { box-sizing:border-box; }
+.pa-top { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:12px; border-bottom:1.5px solid var(--ink); padding-bottom:12px; }
+.pa-brand { display:flex; align-items:center; gap:14px; }
+.pa-brand svg { width:64px; height:40px; flex:none; }
+.pa-title { margin:0; font-size:clamp(26px,4.2vw,44px); line-height:.95; letter-spacing:-.03em; font-weight:700; text-transform:uppercase; }
+.pa-sub { margin:4px 0 0; color:var(--ink2); font-size:13px; }
+.pa-pill { display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--ink); border-radius:999px; padding:5px 14px; background:var(--sand); color:var(--ink); font:600 13px var(--font-anthropic-sans); }
+.pa-pill.dark { background:var(--ink); color:var(--sand); }
+.pa-tabs { display:flex; gap:8px; margin:18px 0 6px; flex-wrap:wrap; }
+.pa-tab { cursor:pointer; border:1.5px solid var(--ink); border-radius:999px; padding:8px 18px; background:transparent; color:var(--ink); font:700 14px var(--font-anthropic-sans); letter-spacing:.01em; }
+.pa-tab[aria-selected="true"] { background:var(--ink); color:var(--sand); }
+.pa-tab:focus-visible, .pa-chip:focus-visible, .pa-btn:focus-visible { outline:3px solid var(--blue); outline-offset:2px; }
+.pa-lede { margin:10px 0 18px; font-size:16px; max-width:70ch; }
+.pa-h2 { margin:30px 0 10px; font-size:22px; letter-spacing:-.02em; text-transform:uppercase; font-weight:700; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.pa-h2 small { font-size:12px; text-transform:none; letter-spacing:0; font-weight:500; color:var(--ink2); }
+.pa-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+.pa-grid.two { grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); }
+.pa-card { background:#FBF4E6; border:1.5px solid var(--ink); border-radius:18px; padding:16px; min-width:0; position:relative; }
+.pa-card.olive { background:var(--olive); color:var(--sand); }
+.pa-card.blue { background:var(--blue); color:#fff; }
+.pa-card.purple { background:var(--purple); color:#fff; }
+.pa-card.coral { background:var(--coral); color:#fff; }
+.pa-card.yellow { background:var(--yellow); }
+#kpis-fin { grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
+#kpis-fin .pa-big { font-size:clamp(24px,2.2vw,32px); overflow-wrap:anywhere; }
+.pa-card.pink { background:#F7B7CB; color:var(--ink); }
+.pa-count { display:flex; gap:8px; margin-top:4px; }
+.pa-count div { flex:1; min-width:0; background:rgba(255,255,255,.55); border:1.5px solid var(--ink); border-radius:14px; padding:8px 4px 6px; text-align:center; }
+.pa-count b { display:block; font-size:clamp(24px,3vw,34px); font-weight:700; letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums; }
+.pa-count span { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
+.pa-k { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; opacity:.85; margin:0 0 6px; }
+.pa-big { font-size:clamp(28px,3.4vw,38px); font-weight:700; letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums; }
+.pa-small { font-size:13px; margin-top:8px; line-height:1.45; font-variant-numeric:tabular-nums; }
+.pa-small b { font-weight:700; }
+.pa-bar { height:10px; border-radius:999px; background:rgba(0,0,0,.15); overflow:hidden; margin-top:10px; display:flex; }
+.pa-bar span { display:block; height:100%; }
+.pa-chips { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 10px; }
+.pa-chip { cursor:pointer; border:1.5px solid currentColor; border-radius:999px; padding:4px 12px; background:transparent; color:inherit; font:600 12px var(--font-anthropic-sans); }
+.pa-chip[aria-pressed="true"] { background:var(--ink); color:var(--sand); border-color:var(--ink); }
+.pa-chip[disabled] { opacity:.45; cursor:not-allowed; }
+.pa-btn { cursor:pointer; border:1.5px solid var(--ink); border-radius:999px; padding:4px 12px; background:var(--yellow); color:var(--ink); font:700 12px var(--font-anthropic-sans); }
+.pa-ctrl { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px; font-size:12px; }
+.pa-ctrl input[type=date] { border:1.5px solid var(--ink); border-radius:10px; padding:3px 6px; background:#fff; color:var(--ink); font:12px var(--font-anthropic-sans); }
+.pa-chart { width:100%; min-height:240px; position:relative; }
+.pa-chart svg text { fill:var(--ink2); font:11px var(--font-anthropic-sans); }
+.pa-chart .axis path, .pa-chart .axis line { stroke:#c9b893; }
+.pa-tip { position:absolute; pointer-events:none; background:var(--ink); color:var(--sand); border-radius:10px; padding:6px 9px; font-size:12px; line-height:1.35; white-space:nowrap; z-index:5; }
+.pa-legend { display:flex; gap:12px; flex-wrap:wrap; font-size:12px; margin-top:6px; }
+.pa-legend i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px; }
+.pa-tw { overflow-x:auto; }
+.pa-t { width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums; }
+.pa-t th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.05em; border-bottom:1.5px solid var(--ink); padding:6px 8px; white-space:nowrap; }
+.pa-t td { border-bottom:1px solid #d9c7a3; padding:6px 8px; }
+.pa-t td.n, .pa-t th.n { text-align:right; }
+.pa-note { font-size:12px; color:var(--ink2); margin:8px 0 0; line-height:1.45; }
+.pa-card.olive .pa-note, .pa-card.blue .pa-note, .pa-card.purple .pa-note, .pa-card.coral .pa-note { color:inherit; opacity:.85; }
+.pa-chart.short { min-height:120px; }
+.pa-stack { display:grid; gap:12px; }
+.pa-sec { font-size:30px; margin-top:44px; padding-top:14px; border-top:3px solid var(--ink); }
+.pa-groups { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr)); }
+.pa-group { border:1.5px solid var(--ink); border-radius:22px; padding:12px; min-width:0; }
+.pa-group.meta { background:#EAD7B6; }
+.pa-group.links { background:#F6E7A8; }
+.pa-glabel { margin:2px 4px 10px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+.pa-group .pa-grid { grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); }
+.pa-group .pa-grid > .yellow { grid-column:1 / -1; }
+.pa-group .pa-grid > .yellow .pa-big { font-size:clamp(40px,5vw,56px); }
+.pa-group .pa-grid > .pa-card:not(.yellow) { padding:12px; }
+.pa-group .pa-grid > .pa-card:not(.yellow) .pa-big { font-size:clamp(20px,2.4vw,26px); }
+.pa-group .pa-grid > .pa-card:not(.yellow) .pa-small { font-size:12px; }
+.pa-mini { max-width:320px; }
+.pa-circles { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+.pa-circle { width:112px; height:112px; border-radius:50%; border:1.5px solid var(--sand); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; }
+.pa-circle b { font-size:17px; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+.pa-circle span { font-size:11px; line-height:1.25; }
+.pa-tiles { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); align-content:start; }
+.pa-tile { background:#FBF4E6; border:1.5px solid var(--ink); border-radius:14px; padding:12px; min-width:0; }
+.pa-tile .v { font-size:24px; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums; line-height:1.1; }
+.pa-tile .l { font-size:12px; color:var(--ink2); margin-top:4px; }
+.pa-tile .d { font-size:12px; font-weight:700; color:var(--ok); margin-left:6px; }
+.pa-tile .split { display:flex; height:8px; border-radius:999px; overflow:hidden; margin-top:10px; background:#e6d6b8; }
+.pa-tile .leg { font-size:11px; color:var(--ink2); margin-top:4px; }
+.pa-wait { border-style:dashed; background:transparent; }
+.pa-wait ul { margin:6px 0 0; padding-left:18px; font-size:13px; line-height:1.6; }
+.pa-funnel { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.pa-fstep { display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; border-radius:14px; padding:9px 12px; min-width:150px; text-align:center; }
+.pa-fstep b { font-size:20px; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+.pa-fstep span { font-size:12px; opacity:.9; }
+.pa-fconv { font-size:11px; color:var(--ink2); font-weight:600; }
+@media print { .pa section[hidden] { display:block !important; break-before:page; } .pa-tabs, .pa-ctrl, .pa-chips { display:none; } }
+</style>
+
+<div class="pa">
+  <header class="pa-top">
+    <div class="pa-brand">
+      <svg viewBox="0 0 64 40" aria-hidden="true"><path d="M4 34 A28 28 0 0 1 60 34 Z" fill="none" stroke="currentColor" stroke-width="3"/><g stroke="currentColor" stroke-width="2.4"><line x1="32" y1="34" x2="32" y2="8"/><line x1="32" y1="34" x2="14" y2="14"/><line x1="32" y1="34" x2="50" y2="14"/><line x1="32" y1="34" x2="7" y2="26"/><line x1="32" y1="34" x2="57" y2="26"/></g><circle cx="32" cy="34" r="8" fill="currentColor"/><line x1="0" y1="38" x2="64" y2="38" stroke="currentColor" stroke-width="3"/></svg>
+      <div>
+        <h1 class="pa-title" id="titulo">Portal de Algodões 2027</h1>
+        <p class="pa-sub">Painel dos sócios · vendas, financeiro e marketing · 26/12 a 02/01, Tikal Praia Bar</p>
+      </div>
+    </div>
+    <div class="pa-ctrl" style="margin:0">
+      <span class="pa-pill">Atualizado em <b data-draw="atualizado" data-source="info" data-field="atualizado_em" data-row="0">—</b></span>
+    </div>
+  </header>
+
+  <nav class="pa-tabs" role="tablist" aria-label="Abas do painel">
+    <button class="pa-tab" role="tab" id="tab-financeiro" aria-selected="true" aria-controls="financeiro">Acompanhamento financeiro</button>
+    <button class="pa-tab" role="tab" id="tab-marketing" aria-selected="false" aria-controls="marketing">Marketing e vendas</button>
+  </nav>
+
+  <!-- ===================== FINANCEIRO ===================== -->
+  <section id="financeiro" role="tabpanel" aria-labelledby="tab-financeiro">
+    <p class="pa-lede" data-read lang="pt-BR">Faturamento de <b data-draw="lede_fat" data-source="kpi" data-field="fat_total" data-row="0">—</b>, sendo <b data-draw="lede_main" data-source="kpi" data-field="fat_principais" data-row="0">—</b> em passaporte, avulso de Réveillon e combo. Faltam <b data-draw="lede_falta" data-source="kpi" data-field="faltam" data-row="0">—</b> ingressos principais para o sold out.</p>
+
+    <div class="pa-grid" id="kpis-fin">
+      <div class="pa-card olive" id="kpi-fat-total">
+        <p class="pa-k">Faturamento total</p>
+        <div class="pa-big" data-draw="fat_total" data-source="kpi" data-field="fat_total" data-row="0">—</div>
+        <div class="pa-bar" data-draw="bar_pix" data-source="kpi"></div>
+        <div class="pa-small">Shotgun <b data-draw="val_shotgun" data-source="kpi" data-field="fat_shotgun" data-row="0">—</b> (<span data-draw="pct_shotgun" data-source="kpi" data-field="pct_shotgun" data-row="0">—</span>)</div>
+        <div class="pa-small" style="margin-top:2px">Pix direto <b data-draw="val_pix" data-source="kpi" data-field="fat_pix" data-row="0">—</b> (<span data-draw="pct_pix" data-source="kpi" data-field="pct_pix" data-row="0">—</span>)</div>
+        <p class="pa-note">Todos os ingressos de 26/12 a 02/01 e os barcos.</p>
+      </div>
+      <div class="pa-card blue" id="kpi-fat-main">
+        <p class="pa-k">Faturamento ingressos principais</p>
+        <div class="pa-big" data-draw="fat_main" data-source="kpi" data-field="fat_principais" data-row="0">—</div>
+        <p class="pa-note">Passaporte, avulso de Réveillon e combo 31/12 + 02/01, em todos os lotes e categorias.</p>
+      </div>
+      <div class="pa-card purple" id="kpi-qtd">
+        <p class="pa-k">Ingressos vendidos</p>
+        <div class="pa-big" data-draw="qtd_total" data-source="kpi" data-field="qtd_total" data-row="0">—</div>
+        <div class="pa-small"><b data-draw="qtd_main" data-source="kpi" data-field="qtd_principais" data-row="0">—</b> principais de <span data-draw="cap">—</span> · faltam <b data-draw="faltam" data-source="kpi" data-field="faltam" data-row="0">—</b> para esgotar</div>
+        <div class="pa-bar" data-draw="bar_cap" data-source="kpi"></div>
+      </div>
+      <div class="pa-card yellow" id="kpi-meta">
+        <p class="pa-k">Meta x realizado</p>
+        <div class="pa-small" style="margin-top:0">Receita principais <b data-draw="meta_rec" data-source="kpi" data-field="pct_meta_receita" data-row="0">—</b> da meta de <span data-draw="meta_rec_v">—</span></div>
+        <div class="pa-bar" data-draw="bar_meta" data-source="kpi"></div>
+        <div class="pa-small">Ticket médio <b data-draw="tm" data-source="kpi" data-field="ticket_medio" data-row="0">—</b> · meta <span data-draw="tm_meta">—</span></div>
+        <p class="pa-note">Metas do relatório da Luciana: receita, 1.242 ingressos e ticket médio.</p>
+      </div>
+      <div class="pa-card pink" id="kpi-contagem">
+        <p class="pa-k">Falta para abrir o Portal</p>
+        <div class="pa-count" data-draw="contagem" aria-live="polite">—</div>
+        <p class="pa-note">26/12, 16h · Tikal Praia Bar, Algodões</p>
+      </div>
+    </div>
+
+    <h2 class="pa-h2" id="h-tipos">Ingressos por tipo</h2>
+    <div class="pa-chips" role="group" aria-label="Filtrar tipo">
+      <button class="pa-chip" data-prod="Passaporte" aria-pressed="false">Só passaporte</button>
+      <button class="pa-chip" data-prod="Avulso Réveillon" aria-pressed="false">Só avulso</button>
+      <button class="pa-chip" data-prod="Combo 31/12 + 02/01" aria-pressed="false">Só combo</button>
+      <button class="pa-btn" data-reset="prod">Zerar filtros</button>
+    </div>
+    <div class="pa-grid" id="kpis-tipo">
+      <div class="pa-card pa-tipo" data-tipo="Passaporte" id="kpi-passaporte" style="border-top:8px solid #607F37">
+        <p class="pa-k">Passaporte 7 dias</p>
+        <div class="pa-big" data-draw="q_pass" data-source="kpi_prod" data-field="qtd" data-where="produto=Passaporte">—</div>
+        <div class="pa-small"><b data-draw="r_pass" data-source="kpi_prod" data-field="receita" data-where="produto=Passaporte">—</b> em receita</div>
+      </div>
+      <div class="pa-card pa-tipo" data-tipo="Avulso Réveillon" id="kpi-avulso" style="border-top:8px solid #EF6351">
+        <p class="pa-k">Avulso de Réveillon</p>
+        <div class="pa-big" data-draw="q_av" data-source="kpi_prod" data-field="qtd" data-where="produto=Avulso%20R%C3%A9veillon">—</div>
+        <div class="pa-small"><b data-draw="r_av" data-source="kpi_prod" data-field="receita" data-where="produto=Avulso%20R%C3%A9veillon">—</b> em receita</div>
+      </div>
+      <div class="pa-card pa-tipo" data-tipo="Combo 31/12 + 02/01" id="kpi-combo" style="border-top:8px solid #1E6BD6">
+        <p class="pa-k">Combo 31/12 + 02/01</p>
+        <div class="pa-big" data-draw="q_combo" data-source="kpi_prod" data-field="qtd" data-where="produto=Combo%2031%2F12%20%2B%2002%2F01">—</div>
+        <div class="pa-small"><b data-draw="r_combo" data-source="kpi_prod" data-field="receita" data-where="produto=Combo%2031%2F12%20%2B%2002%2F01">—</b> em receita</div>
+      </div>
+    </div>
+
+    <h2 class="pa-h2" id="h-ritmo">Ritmo para o sold out <small>ingressos principais</small></h2>
+    <div class="pa-grid">
+      <div class="pa-card coral" id="kpi-ritmo-precisa">
+        <p class="pa-k">Precisamos vender por dia</p>
+        <div class="pa-big" data-draw="r_precisa" data-source="ritmo" data-field="por_dia_necessario" data-row="0">—</div>
+        <div class="pa-small"><b data-draw="r_faltam" data-source="ritmo" data-field="faltam" data-row="0">—</b> ingressos em <b data-draw="r_dias" data-source="ritmo" data-field="dias" data-row="0">—</b> dias até 26/12</div>
+      </div>
+      <div class="pa-card" id="kpi-ritmo-atual">
+        <p class="pa-k">Média dos últimos 7 dias</p>
+        <div class="pa-big" data-draw="r_media" data-source="ritmo" data-field="media_7d" data-row="0">—</div>
+        <div class="pa-small"><b data-draw="r_7d" data-source="ritmo" data-field="vendidos_7d" data-row="0">—</b> ingressos vendidos na última semana</div>
+      </div>
+      <div class="pa-card" id="kpi-ritmo-proj">
+        <p class="pa-k">No ritmo atual, chegamos a</p>
+        <div class="pa-big" data-draw="r_proj" data-source="ritmo" data-field="projecao" data-row="0">—</div>
+        <div class="pa-small">de 1.242 ingressos principais em 26/12</div>
+      </div>
+    </div>
+
+    <h2 class="pa-h2" id="h-lotes-meta">Lotes: meta x vendido <small>metas do relatório da Luciana; agora só falta o sold out</small></h2>
+    <div class="pa-card" id="t-lotes-meta">
+      <div class="pa-tw"><table class="pa-t" data-source="lotes" data-row-key="produto,lote">
+        <thead><tr><th data-field="produto">Ingresso</th><th data-field="lote">Lote</th><th class="n" data-field="meta">Meta</th><th class="n" data-field="vendido">Vendido</th><th class="n" data-field="falta">Falta</th></tr></thead>
+        <tbody data-draw="t_lotes_meta"></tbody></table></div>
+    </div>
+
+    <h2 class="pa-h2" id="h-lotes">Vendas por lote <small>cada ingresso da Shotgun, como na tabela do e-mail</small></h2>
+    <div class="pa-card" id="t-lotes">
+      <div class="pa-ctrl">
+        <label for="f-lote">Tipo</label>
+        <select class="dash-select" id="f-lote" aria-label="Tipo de ingresso">
+          <option value="">Todos</option><option>Passaporte</option><option>Avulso Réveillon</option><option>Combo 31/12 + 02/01</option>
+        </select>
+        <button class="pa-btn" data-reset="lote">Zerar filtros</button>
+      </div>
+      <div class="pa-tw" style="max-height:460px;overflow-y:auto"><table class="pa-t" data-source="vendas_lote" data-row-key="ingresso">
+        <thead><tr><th data-field="inicio">Início</th><th data-field="ingresso">Ingresso</th><th class="n" data-field="qtd">Qtd</th><th class="n" data-field="valor_un">Valor un.</th><th class="n" data-field="receita">Total</th></tr></thead>
+        <tbody data-draw="t_lotes"></tbody>
+      </table></div>
+      <p class="pa-note">Início = primeira venda do ingresso. Ingressos pagos por pix direto entram com o valor da tabela de pix da Luciana.</p>
+    </div>
+
+    <h2 class="pa-h2" id="h-canal">Vendas por sócio e embaixador <small>ingressos principais, pela classificação da planilha da Luciana</small></h2>
+    <div class="pa-grid two">
+      <div class="pa-card" id="g-socio"><p class="pa-k">Parte de cada sócio no total</p><div class="pa-chart" data-draw="ch_socio" data-source="socio_share"></div></div>
+      <div class="pa-card" id="t-embaixadores">
+        <div class="pa-ctrl"><label for="f-socio">Sócio</label><select class="dash-select" id="f-socio" data-draw="sel_socio" data-source="vendas_embaixador" aria-label="Sócio"></select><button class="pa-btn" data-reset="socio">Zerar filtros</button></div>
+        <div class="pa-tw" style="max-height:420px;overflow-y:auto"><table class="pa-t" data-source="vendas_embaixador" data-row-key="embaixador,socio,canal">
+          <thead><tr><th data-field="embaixador">Embaixador</th><th data-field="socio">Sócio</th><th data-field="canal">Tipo</th><th class="n" data-field="qtd">Ingr.</th><th class="n" data-field="receita">Receita</th></tr></thead>
+          <tbody data-draw="t_emb"></tbody></table></div>
+      </div>
+    </div>
+    <div class="pa-grid two" style="margin-top:12px">
+      <div class="pa-card" id="t-canal-cmp">
+        <p class="pa-k">Embaixadores x SAC x embaixadores SAC, no mesmo dia de venda</p>
+        <div class="pa-ctrl"><span class="pa-chips" style="margin:0" role="group" aria-label="Comparar com"><button class="pa-chip" data-cmp="canal" data-ano="2026" aria-pressed="false">2026</button><button class="pa-chip" data-cmp="canal" data-ano="2025" aria-pressed="false">2025</button><button class="pa-chip" data-cmp="canal" data-ano="2024" aria-pressed="false">2024</button><button class="pa-btn" data-cmp-reset="canal">Zerar comparativo</button></span></div>
+        <div class="pa-tw"><table class="pa-t" data-source="canal_cmp" data-row-key="canal,ano"><thead data-draw="th_canal_cmp"></thead><tbody data-draw="t_canal_cmp"></tbody></table></div>
+        <p class="pa-note">Anos anteriores contados até o mesmo dia de venda de hoje (dia <span data-draw="dia_hoje">—</span>). Em 2025 o SAC não era separado dos embaixadores.</p>
+      </div>
+      <div class="pa-card" id="g-ticket-canal"><p class="pa-k">Ticket médio por canal</p><div class="pa-chart short" data-draw="ch_ticket" data-source="canal_share"></div></div>
+    </div>
+
+    <h2 class="pa-h2" id="h-emb-socio">Embaixadores por sócio <small>cadastros no formulário e vendas de ingressos principais</small></h2>
+    <div class="pa-card" id="t-emb-socio">
+      <div class="pa-ctrl"><label for="f-socio2">Sócio</label><select class="dash-select" id="f-socio2" data-draw="sel_socio2" data-source="embaixadores_socio" aria-label="Sócio"></select><button class="pa-btn" data-reset="socio2">Zerar filtros</button></div>
+      <div class="pa-tw"><table class="pa-t" data-source="embaixadores_socio" data-row-key="socio">
+        <thead><tr><th data-field="socio">Sócio</th><th class="n" data-field="cadastrados">Cadastrados</th><th class="n" data-field="novos_30d">Novos em 30 dias</th><th data-field="ultimo_cadastro">Último cadastro</th><th class="n" data-field="vendas_7d">Vendas 7 dias</th><th class="n" data-field="vendas_30d">Vendas 30 dias</th></tr></thead>
+        <tbody data-draw="t_emb_socio"></tbody></table></div>
+    </div>
+    <div class="pa-card" id="t-emb-anos" style="margin-top:12px">
+      <p class="pa-k">Embaixadores ao longo dos anos <small style="text-transform:none">(sem os embaixadores SAC)</small></p>
+      <div class="pa-tw"><table class="pa-t" data-source="emb_anos" data-row-key="ano">
+        <thead><tr><th data-field="ano">Edição</th><th class="n" data-field="cadastrados">Cadastrados</th><th class="n" data-field="ativos">Ativos</th><th class="n" data-field="vendas_emb">Vendas</th><th class="n" data-field="por_ativo">Vendas por ativo</th></tr></thead>
+        <tbody data-draw="t_emb_anos"></tbody></table></div>
+    </div>
+
+    <h2 class="pa-h2" id="h-calendario">Vendas por data calendário <small>acumulado de 2027</small></h2>
+    <div class="pa-ctrl">
+      <label for="d-ini">De</label><input type="date" id="d-ini" min="2026-05-09" max="2027-01-02">
+      <label for="d-fim">até</label><input type="date" id="d-fim" min="2026-05-09" max="2027-01-02">
+      <button class="pa-btn" data-reset="datas">Zerar filtros</button>
+<span class="pa-chips" style="margin:0" role="group" aria-label="Comparar com"><button class="pa-chip" data-cmp="cal" data-ano="2026" aria-pressed="false">2026</button><button class="pa-chip" data-cmp="cal" data-ano="2025" aria-pressed="false">2025</button><button class="pa-chip" data-cmp="cal" data-ano="2024" aria-pressed="false">2024</button><button class="pa-btn" data-cmp-reset="cal">Zerar comparativo</button></span>
+    </div>
+    <div class="pa-grid two">
+      <div class="pa-card" id="g-rec-cal"><p class="pa-k">Receita por data calendário</p><div class="pa-chart" data-draw="ch_rec_cal" data-source="vendas_dia"></div></div>
+      <div class="pa-card" id="g-qtd-cal"><p class="pa-k">Ingressos por data calendário</p><div class="pa-chart" data-draw="ch_qtd_cal" data-source="vendas_dia"></div></div>
+    </div>
+    <p class="pa-note">Linhas tracejadas: mesmas datas nas edições anteriores, da planilha da Luciana.</p>
+
+    <h2 class="pa-h2" id="h-dia-venda">Vendas por dia de venda <small>dia 1 = abertura da pré-venda de cada edição</small></h2>
+    <div class="pa-ctrl"><span class="pa-chips" style="margin:0" role="group" aria-label="Comparar com"><button class="pa-chip" data-cmp="dia" data-ano="2026" aria-pressed="false">2026</button><button class="pa-chip" data-cmp="dia" data-ano="2025" aria-pressed="false">2025</button><button class="pa-chip" data-cmp="dia" data-ano="2024" aria-pressed="false">2024</button><button class="pa-btn" data-cmp-reset="dia">Zerar comparativo</button></span></div>
+    <div class="pa-grid two">
+      <div class="pa-card" id="g-rec-dia"><p class="pa-k">Receita por dia de venda</p><div class="pa-chart" data-draw="ch_rec_dia" data-source="vendas_dia"></div></div>
+      <div class="pa-card" id="g-qtd-dia"><p class="pa-k">Ingressos por dia de venda</p><div class="pa-chart" data-draw="ch_qtd_dia" data-source="vendas_dia"></div></div>
+    </div>
+
+    <h2 class="pa-h2" id="h-publico">Público</h2>
+    <div class="pa-grid two">
+      <div class="pa-card" id="g-genero">
+        <p class="pa-k">Gênero de quem comprou (ingressos principais)</p>
+        <div class="pa-chart" data-draw="ch_genero" data-source="genero"></div>
+        <p class="pa-note">Gênero informado na Shotgun pelo comprador de cada ingresso.</p>
+      </div>
+      <div class="pa-card" id="g-estrangeiros">
+        <p class="pa-k">Estrangeiros (pelo telefone do comprador)</p>
+        <div class="pa-big"><span data-draw="pct_gringo" data-source="gringos" data-field="pct" data-where="origem=Estrangeiro">—</span></div>
+        <div class="pa-small"><b data-draw="qtd_gringo" data-source="gringos" data-field="qtd" data-where="origem=Estrangeiro">—</b> ingressos principais com telefone de fora do Brasil</div>
+        <div class="pa-ctrl" style="margin-top:10px"><span class="pa-chips" style="margin:0" role="group" aria-label="Comparar com"><button class="pa-chip" data-cmp="gr" data-ano="2026" aria-pressed="false">2026</button><button class="pa-chip" data-cmp="gr" data-ano="2025" aria-pressed="false">2025</button><button class="pa-chip" data-cmp="gr" data-ano="2024" aria-pressed="false">2024</button><button class="pa-btn" data-cmp-reset="gr">Zerar comparativo</button></span></div>
+        <div class="pa-small" data-draw="gr_cmp" data-source="hist_estrangeiros"></div>
+        <div class="pa-chart" style="min-height:160px" data-draw="ch_paises" data-source="paises"></div>
+      </div>
+    </div>
+
+    <div class="pa-grid" style="margin-top:12px">
+      <div class="pa-card" id="g-idade"><p class="pa-k">Faixa etária em 26/12</p><div class="pa-chart short" data-draw="ch_idade" data-source="idade"></div></div>
+      <div class="pa-card" id="g-estados"><p class="pa-k">Estados (compradores do Brasil, pelo CEP)</p><div class="pa-chart short" data-draw="ch_estados" data-source="estados"></div></div>
+      <div class="pa-card" id="g-cidades"><p class="pa-k">Cidades</p><div class="pa-chart short" data-draw="ch_cidades" data-source="cidades"></div></div>
+    </div>
+    <p class="pa-note">Dados de quem comprou cada ingresso principal, informados na Shotgun.</p>
+
+    <h2 class="pa-h2" id="h-barcos">Barcos <small>clientes de passaporte, avulso ou combo que também compraram barco</small></h2>
+    <div class="pa-grid two">
+      <div class="pa-card" id="t-cli-barco">
+        <div class="pa-tw"><table class="pa-t" data-source="clientes_barco" data-row-key="produto">
+          <thead><tr><th data-field="produto">Cliente de</th><th class="n" data-field="clientes">Clientes</th><th class="n" data-field="com_barco">Com barco</th></tr></thead>
+          <tbody data-draw="t_cli_barco"></tbody>
+        </table></div>
+        <p class="pa-note">Cruzamento pelo e-mail e pelo nome do comprador. O CPF não vem na API da Shotgun.</p>
+      </div>
+      <div class="pa-card" id="t-barcos">
+        <div class="pa-tw"><table class="pa-t" data-source="barcos" data-row-key="barco">
+          <thead><tr><th data-field="barco">Barco</th><th class="n" data-field="ingressos_barco">Ingressos</th><th class="n" data-field="com_passaporte">De passaporte</th><th class="n" data-field="com_combo">De combo</th><th class="n" data-field="sem_cruzamento">Sem cruzamento</th></tr></thead>
+          <tbody data-draw="t_barcos"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <h2 class="pa-h2" id="h-publico-dia">Público esperado por dia <small>26/12 a 02/01</small></h2>
+    <div class="pa-card" id="g-publico-dia">
+      <div class="pa-chart" data-draw="ch_publico_dia" data-source="publico_dia"></div>
+      <p class="pa-note">Verde claro: quem tem passaporte e pode vir no dia. Nem todo mundo chega em 26/12, então é o máximo possível, não a previsão. Coral: ingressos daquele dia (avulsos, Réveillon e combo). O número de cima é a soma; os barcos aparecem embaixo do dia.</p>
+    </div>
+
+    <h2 class="pa-h2" id="h-checkin">Check-in no festival <small>entradas lidas na Shotgun, horário da Bahia</small></h2>
+    <div class="pa-card" id="g-checkin">
+      <div class="pa-chart short" data-draw="ch_checkin" data-source="checkin"></div>
+    </div>
+
+    <h2 class="pa-h2" id="h-cancel">Reembolsos e revendas</h2>
+    <div class="pa-grid">
+      <div class="pa-card" id="kpi-reemb">
+        <p class="pa-k">Reembolsados</p>
+        <div class="pa-big" data-draw="c_reemb_q" data-source="cancel_kpi" data-field="qtd" data-where="status=Reembolsado">—</div>
+        <div class="pa-small"><b data-draw="c_reemb_v" data-source="cancel_kpi" data-field="valor" data-where="status=Reembolsado">—</b> devolvidos · <span data-draw="c_reemb_p" data-source="cancel_kpi" data-field="pct" data-where="status=Reembolsado">—</span> dos ingressos vendidos</div>
+      </div>
+      <div class="pa-card" id="kpi-revend">
+        <p class="pa-k">Revendidos</p>
+        <div class="pa-big" data-draw="c_rev_q" data-source="cancel_kpi" data-field="qtd" data-where="status=Revendido">—</div>
+        <div class="pa-small"><span data-draw="c_rev_p" data-source="cancel_kpi" data-field="pct" data-where="status=Revendido">—</span> dos ingressos vendidos. Na revenda, outra pessoa compra o ingresso e a receita não muda.</div>
+      </div>
+    </div>
+    <div class="pa-card" id="t-cancel" style="margin-top:12px">
+      <div class="pa-tw"><table class="pa-t" data-source="cancel_prod" data-row-key="status,produto">
+        <thead><tr><th data-field="status">Situação</th><th data-field="produto">Ingresso</th><th class="n" data-field="qtd">Qtd</th><th class="n" data-field="valor">Valor</th></tr></thead>
+        <tbody data-draw="t_cancel"></tbody>
+      </table></div>
+    </div>
+
+    <div class="pa-card pa-mini" id="kpi-taxas" style="margin-top:24px;max-width:420px">
+      <p class="pa-k">Quanto fica com a Shotgun</p>
+      <div class="pa-big" style="font-size:24px" data-draw="tx_comp" data-source="taxas" data-field="taxa_comprador" data-row="0">—</div>
+      <div class="pa-small">Taxa de serviço de <span data-draw="tx_pct" data-source="taxas_kpi" data-field="pct" data-row="0">—</span> sobre os ingressos, paga pelo comprador. Custo para a produção: <b data-draw="tx_prod" data-source="taxas" data-field="custo_produtor" data-row="0">—</b>.</div>
+    </div>
+
+  </section>
+
+  <!-- ===================== MARKETING E VENDAS ===================== -->
+  <section id="marketing" role="tabpanel" aria-labelledby="tab-marketing" hidden>
+    <p class="pa-lede" data-read lang="pt-BR">O SAC já vendeu <b data-draw="m_lede_sac" data-source="sac_kpi" data-field="receita" data-where="produto=Total">—</b> em <b data-draw="m_lede_sac_q" data-source="sac_kpi" data-field="qtd" data-where="produto=Total">—</b> ingressos principais. Os estrangeiros são <b data-draw="m_lede_gr" data-source="gringos" data-field="pct" data-where="origem=Estrangeiro">—</b> dos ingressos principais, e os anúncios custaram <b data-draw="m_lede_inv" data-source="ads_kpi" data-field="investido_bruto" data-row="0">—</b>.</p>
+
+    <h2 class="pa-h2 pa-sec" id="h-sec-sac">SAC</h2>
+    <div class="pa-stack" id="kpis-mkt">
+      <div class="pa-card olive" id="kpi-sac">
+        <p class="pa-k">Receita SAC</p>
+        <div class="pa-big" data-draw="sac_total" data-source="sac_kpi" data-field="receita" data-where="produto=Total">—</div>
+        <div class="pa-small"><b data-draw="sac_total_q" data-source="sac_kpi" data-field="qtd" data-where="produto=Total">—</b> ingressos · SAC padrão e SAC condição especial</div>
+        <div class="pa-circles" data-draw="sac_circ" data-source="sac_kpi"></div>
+      </div>
+      <div class="pa-card pa-mini" id="kpi-wpp">
+        <p class="pa-k">Atendidos no WhatsApp em 2026</p>
+        <div class="pa-big" data-draw="wpp" data-source="leads" data-field="valor" data-where="metrica=Contatos%20no%20WhatsApp%20em%202026">—</div>
+        <p class="pa-note">Aba "contatos", desde 03/01. <span data-draw="wpp_ads" data-source="leads" data-field="valor" data-where="metrica=Leads%20vindos%20de%20an%C3%BAncio">—</span> vieram de anúncio.</p>
+      </div>
+    </div>
+
+    <h2 class="pa-h2" id="h-sac">SAC por tipo de ingresso</h2>
+    <div class="pa-ctrl"><span class="pa-chips" style="margin:0" role="group" aria-label="Comparar com"><button class="pa-chip" data-cmp="sac" data-ano="2026" aria-pressed="false">2026</button><button class="pa-chip" data-cmp="sac" data-ano="2025" aria-pressed="false">2025</button><button class="pa-chip" data-cmp="sac" data-ano="2024" aria-pressed="false">2024</button><button class="pa-btn" data-cmp-reset="sac">Zerar comparativo</button></span></div>
+    <div class="pa-grid two">
+      <div class="pa-card" id="g-sac-qtd"><p class="pa-k">Ingressos vendidos pelo SAC</p><div class="pa-chart short" data-draw="ch_sac_qtd" data-source="sac_tipo"></div></div>
+      <div class="pa-card" id="g-sac-rec"><p class="pa-k">Receita do SAC</p><div class="pa-chart short" data-draw="ch_sac_rec" data-source="sac_tipo"></div></div>
+    </div>
+
+    <h2 class="pa-h2" id="h-quando">Quando as pessoas compram <small>ingressos principais por dia da semana e hora (horário da Bahia)</small></h2>
+    <div class="pa-grid two">
+      <div class="pa-card" id="g-heat"><div class="pa-chart short" data-draw="ch_heat" data-source="hora_semana"></div><p class="pa-note">Quanto mais escuro, mais vendas. Ajuda a escolher o horário de plantão do SAC e de disparo dos anúncios.</p></div>
+      <div class="pa-card" id="g-ticket-canal-mkt"><p class="pa-k">Ticket médio por canal</p><div class="pa-chart short" data-draw="ch_ticket" data-source="canal_share"></div></div>
+    </div>
+
+    <h2 class="pa-h2" id="h-condicoes">Condições especiais <small>oferecidas na aba "condições especiais" e quantas viraram compra</small></h2>
+    <div class="pa-card" id="t-condicoes">
+      <div class="pa-ctrl">
+        <label for="f-tipo">Tipo de oferta</label><select class="dash-select" id="f-tipo" data-draw="sel_tipo" data-source="condicoes_especiais" aria-label="Tipo de oferta"></select>
+        <label for="f-ing">Ingresso</label><select class="dash-select" id="f-ing" data-draw="sel_ing" data-source="condicoes_especiais" aria-label="Ingresso"></select>
+        <button class="pa-btn" data-reset="cond">Zerar filtros</button>
+      </div>
+      <div class="pa-grid" style="margin-bottom:10px">
+        <div><p class="pa-k">Oferecidas</p><div class="pa-big" data-draw="ce_of">—</div></div>
+        <div><p class="pa-k">Converteram</p><div class="pa-big" data-draw="ce_conv">—</div></div>
+        <div><p class="pa-k">Estrangeiros que converteram</p><div class="pa-big" data-draw="ce_gringo">—</div></div>
+      </div>
+      <div class="pa-tw"><table class="pa-t" data-source="condicoes_especiais" data-row-key="tipo,ingresso">
+        <thead><tr><th data-field="tipo">Oferta</th><th data-field="ingresso">Ingresso</th><th class="n" data-field="ofertas">Oferecidas</th><th class="n" data-field="converteram">Converteram</th><th class="n" data-field="estrangeiros">Estrangeiros</th><th class="n" data-field="estrangeiros_converteram">Estr. converteram</th></tr></thead>
+        <tbody data-draw="t_cond"></tbody>
+      </table></div>
+      <p class="pa-note">Conversão: o telefone da oferta aparece entre os compradores da Shotgun, ou a coluna "Confirmou se converteu?" diz sim ou parcialmente.</p>
+    </div>
+
+    <h2 class="pa-h2 pa-sec" id="h-sec-emb-sac">Embaixadores SAC</h2>
+    <div class="pa-stack">
+      <div class="pa-card olive" id="kpi-emb-sac" style="background:#4d6a2b">
+        <p class="pa-k">Receita embaixadores SAC</p>
+        <div class="pa-big" data-draw="esac_total" data-source="esac_kpi" data-field="receita" data-where="produto=Total">—</div>
+        <div class="pa-small"><b data-draw="esac_q" data-source="esac_kpi" data-field="qtd" data-where="produto=Total">—</b> ingressos · <b data-draw="esac_n" data-source="embaixadores_socio" data-field="cadastrados" data-where="socio=Julia%20Bueno%20(SAC)">—</b> embaixadores SAC cadastrados</div>
+        <div class="pa-circles" data-draw="esac_circ" data-source="esac_kpi"></div>
+      </div>
+    </div>
+    <h2 class="pa-h2" id="h-esac-tipo">Embaixadores SAC por tipo de ingresso</h2>
+    <div class="pa-ctrl"><span class="pa-chips" style="margin:0" role="group" aria-label="Comparar com"><button class="pa-chip" data-cmp="esac" data-ano="2026" aria-pressed="false">2026</button><button class="pa-btn" data-cmp-reset="esac">Zerar comparativo</button></span></div>
+    <div class="pa-grid two">
+      <div class="pa-card"><p class="pa-k">Ingressos</p><div class="pa-chart short" data-draw="ch_esac_qtd" data-source="esac_tipo"></div></div>
+      <div class="pa-card"><p class="pa-k">Receita</p><div class="pa-chart short" data-draw="ch_esac_rec" data-source="esac_tipo"></div></div>
+    </div>
+    <div class="pa-grid two" style="margin-top:12px">
+      <div class="pa-card"><p class="pa-k">Embaixadores SAC</p><div class="pa-tw"><table class="pa-t" data-source="vendas_embaixador" data-row-key="embaixador,socio,canal"><thead><tr><th data-field="embaixador">Embaixador</th><th class="n" data-field="qtd">Ingr.</th><th class="n" data-field="receita">Receita</th></tr></thead><tbody data-draw="t_esac"></tbody></table></div>
+        <p class="pa-note">Em 2026 foram 97 ingressos de embaixadores SAC até este dia de venda (ver tabela comparativa).</p></div>
+      <div class="pa-card" id="t-canal-cmp-mkt">
+        <p class="pa-k">Embaixadores SAC x embaixadores x SAC</p>
+        <div class="pa-ctrl"><span class="pa-chips" style="margin:0" role="group" aria-label="Comparar com"><button class="pa-chip" data-cmp="canal" data-ano="2026" aria-pressed="false">2026</button><button class="pa-chip" data-cmp="canal" data-ano="2025" aria-pressed="false">2025</button><button class="pa-chip" data-cmp="canal" data-ano="2024" aria-pressed="false">2024</button><button class="pa-btn" data-cmp-reset="canal">Zerar comparativo</button></span></div>
+        <div class="pa-tw"><table class="pa-t" data-source="canal_cmp" data-row-key="canal,ano"><thead data-draw="th_canal_cmp"></thead><tbody data-draw="t_canal_cmp"></tbody></table></div>
+      </div>
+    </div>
+
+    <h2 class="pa-h2 pa-sec" id="h-gringos">Estrangeiros x brasileiros <small>ingressos principais por tipo</small></h2>
+    <div class="pa-ctrl"><span class="pa-chips" style="margin:0" role="group" aria-label="Comparar com"><button class="pa-chip" data-cmp="gr" data-ano="2026" aria-pressed="false">2026</button><button class="pa-chip" data-cmp="gr" data-ano="2025" aria-pressed="false">2025</button><button class="pa-chip" data-cmp="gr" data-ano="2024" aria-pressed="false">2024</button><button class="pa-btn" data-cmp-reset="gr">Zerar comparativo</button></span></div>
+    <div class="pa-grid">
+      <div class="pa-card" id="kpi-gringo-mkt">
+        <p class="pa-k">Estrangeiros</p>
+        <div class="pa-big" data-draw="m_pct_gringo" data-source="gringos" data-field="pct" data-where="origem=Estrangeiro">—</div>
+        <div class="pa-small">Receita <b data-draw="m_rec_gringo" data-source="gringos" data-field="receita" data-where="origem=Estrangeiro">—</b></div>
+        <div class="pa-small" data-draw="gr_cmp" data-source="hist_estrangeiros"></div>
+        <div class="pa-small">Com condição especial: <b data-draw="m_qtd_gringo_ce" data-source="gringos" data-field="qtd_cond" data-where="origem=Estrangeiro">—</b> ingressos, <b data-draw="m_rec_gringo_ce" data-source="gringos" data-field="receita_cond" data-where="origem=Estrangeiro">—</b></div>
+      </div>
+      <div class="pa-card" id="g-orig-rec"><p class="pa-k">Receita</p><div class="pa-chart" data-draw="ch_orig_rec" data-source="origem_prod"></div></div>
+      <div class="pa-card" id="g-orig-qtd"><p class="pa-k">Ingressos</p><div class="pa-chart" data-draw="ch_orig_qtd" data-source="origem_prod"></div></div>
+    </div>
+
+    <h2 class="pa-h2 pa-sec" id="h-recorrencia">Recorrência</h2>
+    <div class="pa-grid two">
+      <div class="pa-card yellow" id="kpi-recorrencia">
+        <p class="pa-k">Clientes de edições anteriores que voltaram</p>
+        <div class="pa-big" data-draw="rec_taxa" data-source="recorrencia" data-field="taxa" data-row="0">—</div>
+        <div class="pa-small"><b data-draw="rec_ret" data-source="recorrencia" data-field="retidos" data-row="0">—</b> de <span data-draw="rec_base" data-source="recorrencia" data-field="base" data-row="0">—</span> clientes de 2024 a 2026 já compraram em 2027</div>
+        <p class="pa-note">Comparação pelo e-mail do comprador. Atualiza com as vendas da Shotgun.</p>
+      </div>
+      <div class="pa-card" id="t-recorrencia"><p class="pa-k">Metas de retenção</p>
+        <div class="pa-tw"><table class="pa-t" data-source="rec_metas" data-row-key="taxa"><thead><tr><th data-field="taxa">Meta</th><th class="n" data-field="clientes">Clientes</th><th class="n" data-field="faltam">Faltam</th></tr></thead><tbody data-draw="t_rec"></tbody></table></div></div>
+    </div>
+
+    <h2 class="pa-h2 pa-sec" id="h-sec-anuncios">Anúncios</h2>
+    <h2 class="pa-h2" id="h-ads-vendas">Vendas dos anúncios <small>links ADS (Roberto) na Shotgun e compras atribuídas pela Meta</small></h2>
+    <div class="pa-groups">
+      <div class="pa-group meta" id="grp-meta">
+        <p class="pa-glabel">Tudo o que a Meta atribui aos anúncios</p>
+        <div class="pa-grid">
+          <div class="pa-card yellow" id="kpi-ads-total">
+            <p class="pa-k">Compras vindas de anúncio</p>
+            <div class="pa-big" data-draw="ads_q_meta" data-source="ads_kpi" data-field="compras_pixel" data-row="0">—</div>
+            <div class="pa-small"><b data-draw="ads_r_meta" data-source="ads_kpi" data-field="receita_pixel" data-row="0">—</b> em receita</div>
+            <p class="pa-note">API da Meta, até 23/11. Inclui as compras pelos links ADS e por outros links.</p>
+          </div>
+          <div class="pa-card" id="kpi-ads-pixel">
+            <p class="pa-k">Por outros links (SAC ou embaixador)</p>
+            <div class="pa-big" data-draw="ads_q_px" data-source="ads_cards" data-field="qtd" data-where="grupo=pixel">—</div>
+            <div class="pa-small"><b data-draw="ads_r_px" data-source="ads_cards" data-field="receita" data-where="grupo=pixel">—</b> em receita</div>
+            <p class="pa-note">Quem viu o anúncio e comprou por outro link. A Meta não informa o tipo de ingresso.</p>
+          </div>
+        </div>
+      </div>
+      <div class="pa-group links" id="grp-links">
+        <p class="pa-glabel">Links ADS (Roberto) na Shotgun</p>
+        <div class="pa-grid">
+          <div class="pa-card yellow" id="kpi-ads-links">
+            <p class="pa-k">Compras pelos links ADS</p>
+            <div class="pa-big" data-draw="ads_q_total" data-source="ads_cards" data-field="qtd" data-where="grupo=links">—</div>
+            <div class="pa-small"><b data-draw="ads_q_com" data-source="ads_cards" data-field="qtd_comissionavel" data-where="grupo=links">—</b> comissionáveis · <b data-draw="ads_q_nao" data-source="ads_cards" data-field="qtd_nao_comissionavel" data-where="grupo=links">—</b> não comissionáveis</div>
+            <p class="pa-note">Comissionáveis: passaporte, avulso de Réveillon e combo.</p>
+          </div>
+          <div class="pa-card" id="kpi-ads-sac">
+            <p class="pa-k">Link valor SAC</p>
+            <div class="pa-big" data-draw="ads_r_sac" data-source="ads_cards" data-field="receita" data-where="grupo=sac">—</div>
+            <div class="pa-small"><b data-draw="ads_q_sac" data-source="ads_cards" data-field="qtd" data-where="grupo=sac">—</b> ingressos · <b data-draw="ads_c_sac" data-source="ads_cards" data-field="qtd_comissionavel" data-where="grupo=sac">—</b> comissionáveis</div>
+          </div>
+          <div class="pa-card" id="kpi-ads-emb">
+            <p class="pa-k">Link valor embaixador</p>
+            <div class="pa-big" data-draw="ads_r_emb" data-source="ads_cards" data-field="receita" data-where="grupo=embaixador">—</div>
+            <div class="pa-small"><b data-draw="ads_q_emb" data-source="ads_cards" data-field="qtd" data-where="grupo=embaixador">—</b> ingressos · <b data-draw="ads_c_emb" data-source="ads_cards" data-field="qtd_comissionavel" data-where="grupo=embaixador">—</b> comissionáveis</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pa-grid" style="margin-top:12px">
+      <div class="pa-card coral" id="kpi-invest">
+        <p class="pa-k">Investido em anúncios</p>
+        <div class="pa-big" data-draw="inv_bruto" data-source="ads_kpi" data-field="investido_bruto" data-row="0">—</div>
+        <div class="pa-small">Líquido de impostos <b data-draw="inv_liq" data-source="ads_kpi" data-field="investido_liquido" data-row="0">—</b></div>
+      </div>
+      <div class="pa-card blue" id="kpi-ads-rec">
+        <p class="pa-k">Receita de anúncios</p>
+        <div class="pa-big" data-draw="ads_rec_links" data-source="ads_kpi" data-field="receita_links" data-row="0">—</div>
+        <div class="pa-small">Links ADS · <b data-draw="ads_rec_main" data-source="ads_kpi" data-field="receita_links_principais" data-row="0">—</b> em ingressos comissionáveis</div>
+        <div class="pa-small">Pixel da Meta · <b data-draw="ads_rec_pixel" data-source="ads_kpi" data-field="receita_pixel" data-row="0">—</b></div>
+      </div>
+      <div class="pa-card purple" id="kpi-roi">
+        <p class="pa-k">ROI e ROAS</p>
+        <div class="pa-tw"><table class="pa-t" style="color:inherit" data-source="ads_roi" data-row-key="base">
+          <thead><tr><th data-field="base" style="border-color:currentColor">Base</th><th class="n" data-field="roi" style="border-color:currentColor">ROI</th><th class="n" data-field="roas" style="border-color:currentColor">ROAS</th></tr></thead>
+          <tbody data-draw="t_roi"></tbody>
+        </table></div>
+        <p class="pa-note">ROI = receita ÷ investimento bruto. ROAS = receita ÷ investimento líquido.</p>
+      </div>
+    </div>
+
+    <h2 class="pa-h2" id="h-anuncios">Desempenho dos anúncios <small>Meta Ads · 04/10 a 23/11</small></h2>
+    <div class="pa-grid two">
+      <div class="pa-card" id="g-funil">
+        <p class="pa-k" style="text-align:center">Funil</p>
+        <div class="pa-funnel" data-draw="funil" data-source="anuncios_funil"></div>
+      </div>
+      <div class="pa-tiles" data-draw="ads_tiles" data-source="anuncios_meta" id="t-ads-meta"></div>
+    </div>
+
+    <h2 class="pa-h2" id="h-publico-ads">Quem compra <small>para comparar com o público dos anúncios</small></h2>
+    <div class="pa-grid">
+      <div class="pa-card"><p class="pa-k">Faixa etária em 26/12</p><div class="pa-chart short" data-draw="ch_idade" data-source="idade"></div></div>
+      <div class="pa-card"><p class="pa-k">Estados</p><div class="pa-chart short" data-draw="ch_estados" data-source="estados"></div></div>
+      <div class="pa-card"><p class="pa-k">Cidades</p><div class="pa-chart short" data-draw="ch_cidades" data-source="cidades"></div></div>
+    </div>
+
+    <h2 class="pa-h2" id="h-instagram">O que os anúncios trazem além das vendas <small>Instagram @portaldealgodoes · 26/10 a 22/11, comparado ao período anterior</small></h2>
+    <div class="pa-grid" data-draw="ig_tiles" data-source="instagram" id="ig-tiles"></div>
+
+  </section>
+</div>
+
+<script>
+// ---------- fontes: um arquivo agregado, um conjunto por chave ----------
+dash.loader('info', { description: 'Data e hora da última atualização', fn: ({answer}) => [answer._info] });
+dash.loader('vendas_produto', { description: 'Ingressos válidos por tipo e forma de pagamento', fn: ({answer}) => answer.vendas_produto });
+dash.loader('vendas_dia', { description: 'Ingressos válidos por dia de compra e tipo', fn: ({answer}) => answer.vendas_dia });
+dash.loader('canal_produto', { description: 'Ingressos válidos por canal e tipo', fn: ({answer}) => answer.canal_produto });
+dash.loader('genero', { description: 'Gênero dos compradores dos ingressos principais', fn: ({answer}) => answer.genero });
+dash.loader('origem', { description: 'Ingressos por origem do telefone, tipo e condição especial', fn: ({answer}) => answer.origem });
+dash.loader('paises', { description: 'Países dos compradores estrangeiros', fn: ({answer}) => answer.paises });
+dash.loader('barcos', { description: 'Ingressos de barco e cruzamento com passaporte/combo', fn: ({answer}) => answer.barcos });
+dash.loader('clientes_barco', { description: 'Clientes de cada ingresso principal que têm barco', fn: ({answer}) => answer.clientes_barco });
+dash.loader('anuncios_links', { description: 'Vendas pelos links ADS (Roberto)', fn: ({answer}) => answer.anuncios_links });
+dash.loader('anuncios_meta', { description: 'Métricas do relatório Meta Ads', fn: ({answer}) => answer.anuncios_meta });
+dash.loader('anuncios_funil', { description: 'Funil do relatório Meta Ads', fn: ({answer}) => answer.anuncios_funil });
+dash.loader('instagram', { description: 'Métricas do Instagram no Meta Business Suite', fn: ({answer}) => answer.instagram });
+dash.loader('condicoes_especiais', { description: 'Condições especiais oferecidas e convertidas', fn: ({answer}) => answer.condicoes_especiais });
+dash.loader('vendas_lote', { description: 'Ingressos principais por nome do ingresso (lote)', fn: ({answer}) => answer.vendas_lote });
+dash.loader('cidades', { description: 'Cidades dos compradores de ingressos principais (15 maiores)', fn: ({answer}) => answer.cidades });
+dash.loader('estados', { description: 'Estados dos compradores do Brasil, pelo CEP', fn: ({answer}) => answer.estados });
+dash.loader('idade', { description: 'Faixa etária dos compradores em 26/12/2026', fn: ({answer}) => answer.idade });
+dash.loader('hora_semana', { description: 'Ingressos principais por dia da semana e hora da compra (horário da Bahia)', fn: ({answer}) => answer.hora_semana });
+dash.loader('publico_dia', { description: 'Passaportes e ingressos de cada dia do festival', fn: ({answer}) => answer.publico_dia });
+dash.loader('checkin', { description: 'Ingressos lidos na entrada por dia e hora', fn: ({answer}) => answer.checkin });
+dash.loader('cancelamentos', { description: 'Ingressos reembolsados e revendidos', fn: ({answer}) => answer.cancelamentos });
+dash.loader('taxas', { description: 'Taxas da Shotgun nos ingressos válidos', fn: ({answer}) => answer.taxas });
+dash.loader('vendas_embaixador', { description: 'Ingressos principais por embaixador, sócio e tipo', fn: ({answer}) => answer.vendas_embaixador });
+dash.loader('vendas_socio', { description: 'Ingressos principais por sócio', fn: ({answer}) => answer.vendas_socio });
+dash.loader('embaixadores_socio', { description: 'Cadastros de embaixadores e vendas recentes por sócio', fn: ({answer}) => answer.embaixadores_socio });
+dash.loader('recorrencia', { description: 'Clientes de 2024–2026 que compraram em 2027', fn: ({answer}) => answer.recorrencia });
+dash.loader('lotes', { description: 'Meta e vendido por lote', fn: ({answer}) => answer.lotes });
+dash.loader('hist_dia', { description: 'Acumulado por dia de venda, 2024–2026', fn: ({answer}) => answer.hist_dia });
+dash.loader('hist_cal', { description: 'Acumulado por data equivalente, 2024–2026', fn: ({answer}) => answer.hist_cal });
+dash.loader('hist_canal', { description: 'Vendas por canal, tipo de ingresso e dia de venda, 2024–2026', fn: ({answer}) => answer.hist_canal });
+dash.loader('hist_estrangeiros', { description: 'Estrangeiros por edição', fn: ({answer}) => answer.hist_estrangeiros });
+dash.loader('hist_embaixadores', { description: 'Embaixadores cadastrados, ativos e vendas por edição', fn: ({answer}) => answer.hist_embaixadores });
+dash.loader('leads', { description: 'Totais da planilha de leads', fn: ({answer}) => answer.leads });
+
+// ---------- cálculos ----------
+dash.calc('kpi', { inputs: ['vendas_produto'], title: 'Indicadores principais',
+  description: 'Somas de receita e ingressos; capacidade e meta de 1.242 ingressos principais, meta de receita de R$ 3.910.917 (relatório da Luciana)',
+  fn: (vendas) => {
+    const CAP = 1242, MAIN = ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'];
+    const s = (f, k) => vendas.filter(f).reduce((a, r) => a + Number(r[k]), 0);
+    const total = s(() => true, 'receita'), pix = s((r) => r.via === 'Pix direto', 'receita');
+    const qm = s((r) => MAIN.includes(r.produto), 'qtd'); const fm = s((r) => MAIN.includes(r.produto), 'receita');
+    return [{ fat_total: total, fat_pix: pix, fat_shotgun: total - pix, pct_pix: total ? pix / total : 0, pct_shotgun: total ? (total - pix) / total : 0,
+      fat_principais: s((r) => MAIN.includes(r.produto), 'receita'), qtd_total: s(() => true, 'qtd'), qtd_principais: qm, capacidade: CAP, faltam: Math.max(0, CAP - qm), pct_cap: qm / CAP, ticket_medio: qm ? fm / qm : 0, pct_meta_receita: fm / 3910917 }];
+  } });
+dash.calc('ritmo', { inputs: ['vendas_dia', 'vendas_produto'], title: 'Ritmo para o sold out',
+  description: 'Faltam = 1.242 menos ingressos principais vendidos; dias até 26/12 contados a partir de hoje; média dos últimos 7 dias com venda registrada até hoje',
+  fn: (dias, vendas) => { const MAIN = ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'];
+    const vendidos = vendas.filter((r) => MAIN.includes(r.produto)).reduce((a, r) => a + Number(r.qtd), 0);
+    const hoje = new Date(); const ev = new Date('2026-12-26T00:00:00-03:00'); const d = Math.max(1, Math.ceil((ev - hoje) / 864e5));
+    const ini = new Date(hoje.getTime() - 7 * 864e5).toISOString().slice(0, 10);
+    const v7 = dias.filter((r) => r.grupo === 'Principal' && r.data > ini).reduce((a, r) => a + Number(r.qtd), 0);
+    const faltam = Math.max(0, 1242 - vendidos);
+    return [{ faltam, dias: d, por_dia_necessario: faltam / d, vendidos_7d: v7, media_7d: v7 / 7, projecao: Math.round(vendidos + v7 / 7 * d) }]; } });
+dash.calc('cancel_kpi', { inputs: ['cancelamentos', 'vendas_produto'], title: 'Reembolsos e revendas', description: 'Soma por situação; % sobre válidos + reembolsados + revendidos',
+  fn: (canc, vendas) => { const tot = vendas.reduce((a, r) => a + Number(r.qtd), 0) + canc.reduce((a, r) => a + Number(r.qtd), 0);
+    return ['Reembolsado', 'Revendido'].map((s) => { const x = canc.filter((r) => r.status === s); const q = x.reduce((a, r) => a + Number(r.qtd), 0);
+      return { status: s, qtd: q, valor: x.reduce((a, r) => a + Number(r.valor), 0), pct: tot ? q / tot : 0 }; }); } });
+dash.calc('cancel_prod', { inputs: ['cancelamentos'], title: 'Reembolsos e revendas por ingresso', description: 'Soma por situação e tipo de ingresso',
+  fn: (canc) => { const g = {}; canc.forEach((r) => { const k = r.status + '|' + r.produto; g[k] ??= { status: r.status, produto: r.produto, qtd: 0, valor: 0 }; g[k].qtd += Number(r.qtd); g[k].valor += Number(r.valor); });
+    return Object.values(g).sort((a, b) => a.status.localeCompare(b.status) || b.qtd - a.qtd); } });
+dash.calc('taxas_kpi', { inputs: ['taxas'], title: 'Taxa da Shotgun em %', description: 'Taxa paga pelo comprador ÷ valor dos ingressos válidos',
+  fn: (tx) => [{ pct: tx[0] && Number(tx[0].valor_ingressos) ? Number(tx[0].taxa_comprador) / Number(tx[0].valor_ingressos) : 0 }] });
+dash.calc('socio_share', { inputs: ['vendas_socio'], title: 'Parte de cada sócio', description: 'Ingressos do sócio ÷ total de ingressos principais',
+  fn: (vs) => { const t = vs.reduce((a, r) => a + Number(r.qtd), 0); return vs.map((r) => ({ ...r, pct: t ? r.qtd / t : 0 })); } });
+dash.calc('canal_cmp', { inputs: ['canal_produto', 'hist_canal'], title: 'Canais no mesmo dia de venda', description: '2027 até hoje; anos anteriores até o mesmo dia de venda (dia 1 = abertura da pré-venda)',
+  fn: (cp, hc) => { const dia = Math.floor((Date.now() - Date.parse('2026-05-09T03:00:00Z')) / 864e5) + 1; const MAIN = ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'];
+    const norm = (c) => c.startsWith('SAC') ? 'SAC' : c; const out = {}; const add = (canal, ano, q, v) => { const k = canal + '|' + ano; out[k] ??= { canal, ano, qtd: 0, receita: 0, dia }; out[k].qtd += q; out[k].receita += v; };
+    cp.filter((r) => MAIN.includes(r.produto)).forEach((r) => add(norm(r.canal), 2027, Number(r.qtd), Number(r.receita)));
+    hc.filter((r) => Number(r.dia_venda) <= dia && MAIN.includes(r.produto)).forEach((r) => add(r.canal, Number(r.ano), Number(r.qtd), Number(r.receita)));
+    return Object.values(out); } });
+dash.calc('tipo_cmp', { inputs: ['canal_produto', 'hist_canal'], title: 'SAC e embaixadores SAC por tipo, no mesmo dia de venda', description: 'SAC = SAC padrão + condição especial',
+  fn: (cp, hc) => { const dia = Math.floor((Date.now() - Date.parse('2026-05-09T03:00:00Z')) / 864e5) + 1; const out = {};
+    const add = (canal, ano, produto, q, v) => { const k = [canal, ano, produto].join('|'); out[k] ??= { canal, ano, produto, qtd: 0, receita: 0 }; out[k].qtd += q; out[k].receita += v; };
+    cp.forEach((r) => { const c = r.canal.startsWith('SAC') ? 'SAC' : r.canal; if (c === 'SAC' || c === 'Embaixador SAC') add(c, 2027, r.produto, Number(r.qtd), Number(r.receita)); });
+    hc.filter((r) => Number(r.dia_venda) <= dia && (r.canal === 'SAC' || r.canal === 'Embaixador SAC')).forEach((r) => add(r.canal, Number(r.ano), r.produto, Number(r.qtd), Number(r.receita)));
+    return Object.values(out); } });
+dash.calc('esac_kpi', { inputs: ['canal_produto'], title: 'Receita embaixadores SAC', description: 'Ingressos de embaixadores ligados ao SAC, por tipo e total',
+  fn: (cp) => { const s = cp.filter((r) => r.canal === 'Embaixador SAC'); const rows = ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'].map((p) => ({ produto: p, qtd: s.filter((r) => r.produto === p).reduce((a, r) => a + Number(r.qtd), 0), receita: s.filter((r) => r.produto === p).reduce((a, r) => a + Number(r.receita), 0) }));
+    return [...rows, { produto: 'Total', qtd: rows.reduce((a, r) => a + r.qtd, 0), receita: rows.reduce((a, r) => a + r.receita, 0) }]; } });
+dash.calc('emb_anos', { inputs: ['hist_embaixadores'], title: 'Embaixadores por edição', description: 'Vendas por ativo = vendas de embaixadores ÷ embaixadores com venda',
+  fn: (h) => h.map((r) => ({ ...r, por_ativo: Number(r.ativos) ? Number(r.vendas_emb) / Number(r.ativos) : 0 })) });
+dash.calc('rec_metas', { inputs: ['recorrencia'], title: 'Metas de retenção', description: 'Clientes que faltam para cada meta',
+  fn: (rc) => (rc[0]?.metas || []).map((m) => ({ taxa: m.taxa, clientes: m.clientes, faltam: Math.max(0, m.clientes - Number(rc[0].retidos)) })) });
+dash.calc('kpi_prod', { inputs: ['vendas_produto'], title: 'Ingressos principais por tipo', description: 'Soma por tipo, juntando Shotgun e pix direto',
+  fn: (vendas) => ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'].map((p) => ({ produto: p,
+    qtd: vendas.filter((r) => r.produto === p).reduce((a, r) => a + Number(r.qtd), 0),
+    receita: vendas.filter((r) => r.produto === p).reduce((a, r) => a + Number(r.receita), 0) })) });
+dash.calc('canal_share', { inputs: ['canal_produto'], title: 'Ingressos principais por canal', description: 'Soma por canal, parte de cada canal no total e ticket médio (receita ÷ ingressos)',
+  fn: (canal) => { const m = canal.filter((r) => r.canal !== 'Barcos e dias avulsos' && ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'].includes(r.produto));
+    const tot = m.reduce((a, r) => a + Number(r.qtd), 0); const g = {};
+    m.forEach((r) => { g[r.canal] ??= { canal: r.canal, qtd: 0, receita: 0 }; g[r.canal].qtd += Number(r.qtd); g[r.canal].receita += Number(r.receita); });
+    return Object.values(g).map((r) => ({ ...r, pct: tot ? r.qtd / tot : 0, ticket_medio: r.qtd ? r.receita / r.qtd : 0 })).sort((a, b) => b.qtd - a.qtd); } });
+dash.calc('gringos', { inputs: ['origem'], title: 'Estrangeiros nos ingressos principais', description: 'Telefone fora do Brasil; partes de ingressos e de receita, com e sem condição especial',
+  fn: (origem) => { const m = origem.filter((r) => r.grupo === 'Principal'); const tot = m.reduce((a, r) => a + Number(r.qtd), 0); const g = {};
+    m.forEach((r) => { g[r.origem] ??= { origem: r.origem, qtd: 0, receita: 0, qtd_cond: 0, receita_cond: 0 }; const x = g[r.origem];
+      x.qtd += Number(r.qtd); x.receita += Number(r.receita); if (r.condicao_especial === 'Sim') { x.qtd_cond += Number(r.qtd); x.receita_cond += Number(r.receita); } });
+    return Object.values(g).map((r) => ({ ...r, pct: tot ? r.qtd / tot : 0 })); } });
+dash.calc('origem_prod', { inputs: ['origem'], title: 'Brasileiros x estrangeiros por tipo', description: 'Ingressos principais; sem telefone fica de fora',
+  fn: (origem) => { const g = {}; origem.filter((r) => r.grupo === 'Principal' && r.origem !== 'Sem telefone').forEach((r) => {
+      const k = r.origem + '|' + r.produto; g[k] ??= { origem: r.origem, produto: r.produto, qtd: 0, receita: 0 }; g[k].qtd += Number(r.qtd); g[k].receita += Number(r.receita); });
+    return Object.values(g); } });
+dash.calc('sac_tipo', { inputs: ['canal_produto'], title: 'SAC por tipo de ingresso', description: 'Ingressos com SAC no nome e vendas pelo link SAC valor embaixador (promoter-31064)',
+  fn: (canal) => canal.filter((r) => r.canal.startsWith('SAC')).map((r) => ({ produto: r.produto, qtd: Number(r.qtd), receita: Number(r.receita) })) });
+dash.calc('sac_kpi', { inputs: ['canal_produto'], title: 'Receita SAC', description: 'SAC padrão e SAC condição especial, por tipo e total',
+  fn: (canal) => { const s = canal.filter((r) => r.canal.startsWith('SAC'));
+    const rows = ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'].map((p) => ({ produto: p, qtd: s.filter((r) => r.produto === p).reduce((a, r) => a + Number(r.qtd), 0), receita: s.filter((r) => r.produto === p).reduce((a, r) => a + Number(r.receita), 0) }));
+    return [...rows, { produto: 'Total', qtd: rows.reduce((a, r) => a + r.qtd, 0), receita: rows.reduce((a, r) => a + r.receita, 0) }]; } });
+dash.calc('ads_links_sum', { inputs: ['anuncios_links'], title: 'Vendas por link ADS', description: 'Soma por link de anúncio',
+  fn: (links) => { const g = {}; links.forEach((r) => { g[r.link] ??= { link: r.link, qtd: 0, receita: 0 }; g[r.link].qtd += Number(r.qtd); g[r.link].receita += Number(r.receita); }); return Object.values(g); } });
+dash.calc('ads_kpi', { inputs: ['anuncios_links', 'anuncios_meta'], title: 'Anúncios: investimento e receita', description: 'Receita dos links ADS e do pixel; investimento do relatório Meta Ads',
+  fn: (links, meta) => { const v = (m) => Number((meta.find((r) => r.metrica === m) || {}).valor || 0);
+    return [{ investido_bruto: v('Investimento bruto'), investido_liquido: v('Investimento líquido (sem impostos)'), receita_pixel: v('Receita atribuída pelo pixel'), compras_pixel: v('Compras atribuídas pelo pixel'),
+      receita_links: links.reduce((a, r) => a + Number(r.receita), 0), qtd_links: links.reduce((a, r) => a + Number(r.qtd), 0),
+      receita_links_principais: links.filter((r) => r.comissionavel === 'Sim').reduce((a, r) => a + Number(r.receita), 0) }]; } });
+dash.calc('ads_cards', { inputs: ['anuncios_links', 'anuncios_meta'], title: 'Vendas dos anúncios por origem',
+  description: 'Links ADS na Shotgun por tipo de link; pixel sem link = compras e receita do pixel menos as dos links ADS',
+  fn: (links, meta) => { const v = (m) => Number((meta.find((r) => r.metrica === m) || {}).valor || 0);
+    const sum = (f, k) => links.filter(f).reduce((a, r) => a + Number(r[k]), 0);
+    const sac = (r) => r.link.includes('valor SAC'), emb = (r) => r.link.includes('valor embaixador');
+    const q = sum(() => true, 'qtd'), rec = sum(() => true, 'receita');
+    return [
+      { grupo: 'links', receita: rec, qtd: q, qtd_comissionavel: sum((r) => r.comissionavel === 'Sim', 'qtd'), qtd_nao_comissionavel: sum((r) => r.comissionavel !== 'Sim', 'qtd') },
+      { grupo: 'sac', receita: sum(sac, 'receita'), qtd: sum(sac, 'qtd'), qtd_comissionavel: sum((r) => sac(r) && r.comissionavel === 'Sim', 'qtd'), qtd_nao_comissionavel: sum((r) => sac(r) && r.comissionavel !== 'Sim', 'qtd') },
+      { grupo: 'embaixador', receita: sum(emb, 'receita'), qtd: sum(emb, 'qtd'), qtd_comissionavel: sum((r) => emb(r) && r.comissionavel === 'Sim', 'qtd'), qtd_nao_comissionavel: sum((r) => emb(r) && r.comissionavel !== 'Sim', 'qtd') },
+      { grupo: 'pixel', receita: Math.max(0, v('Receita atribuída pelo pixel') - rec), qtd: Math.max(0, v('Compras atribuídas pelo pixel') - q), qtd_comissionavel: null, qtd_nao_comissionavel: null }];
+  } });
+dash.calc('ads_roi', { inputs: ['anuncios_links', 'anuncios_meta'], title: 'ROI e ROAS', description: 'ROI = receita ÷ investimento bruto; ROAS = receita ÷ investimento líquido',
+  fn: (links, meta) => { const v = (m) => Number((meta.find((r) => r.metrica === m) || {}).valor || 0);
+    const b = v('Investimento bruto'), l = v('Investimento líquido (sem impostos)'), rl = links.reduce((a, r) => a + Number(r.receita), 0), rp = v('Receita atribuída pelo pixel');
+    return [{ base: 'Links diretos ADS', receita: rl, roi: b ? rl / b : 0, roas: l ? rl / l : 0 }, { base: 'Pixel da Meta', receita: rp, roi: b ? rp / b : 0, roas: l ? rp / l : 0 }]; } });
+
+// ---------- formatos e cores ----------
+window.PA = (() => {
+  const nf = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }); const brl = (v) => nf.format(v); brl.format = brl;
+  const brlK = (v) => v >= 1e6 ? 'R$ ' + (v / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + ' mi' : v >= 1e3 ? 'R$ ' + Math.round(v / 1e3).toLocaleString('pt-BR') + ' mil' : brl.format(v);
+  const num = (v) => Number(v).toLocaleString('pt-BR');
+  const pct = (v) => (v * 100).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%';
+  const ANOCOL = { 2026: '#EF6351', 2025: '#1E6BD6', 2024: '#6B4BA6' };
+  const COL = { 'Passaporte': '#607F37', 'Avulso Réveillon': '#EF6351', 'Combo 31/12 + 02/01': '#1E6BD6', 'Barco 27/12': '#6B4BA6', 'Barco 28/12': '#B06AB3', 'Barco 29/12': '#8D72C4', 'Barco 30/12': '#4A3279', 'Dias avulsos': '#F2C94C' };
+  const state = { prod: null, ini: null, fim: null, tipo: '', ing: '', lote: '', socio: '', socio2: '', cmp: { cal: new Set(), dia: new Set(), gr: new Set(), canal: new Set(), sac: new Set(), esac: new Set() } };
+  const ok = (id) => dash.data(id).status === 'ok';
+  const fail = (el, id) => { const s = dash.data(id).status; el.textContent = s === 'error' ? 'Não carregou' : '—'; };
+  return { brl, brlK, num, pct, COL, ANOCOL, state, ok, fail };
+})();
+
+// ---------- abas ----------
+document.querySelectorAll('.pa-tab').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.pa-tab').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+  document.querySelectorAll('.pa section[role=tabpanel]').forEach((s) => { s.hidden = s.id !== b.getAttribute('aria-controls'); });
+  dash.setLink(b.getAttribute('aria-controls'));
+}));
+if (location.hash === '#marketing') document.getElementById('tab-marketing')?.click();
+
+// ---------- filtros ----------
+document.querySelectorAll('.pa-chip[data-prod]').forEach((b) => b.addEventListener('click', () => {
+  PA.state.prod = PA.state.prod === b.dataset.prod ? null : b.dataset.prod;
+  document.querySelectorAll('.pa-chip[data-prod]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.prod === PA.state.prod)));
+  document.querySelectorAll('.pa-tipo').forEach((c) => { c.hidden = !!PA.state.prod && c.dataset.tipo !== PA.state.prod; });
+}));
+const CMPDRAW = { cal: ['ch_rec_cal', 'ch_qtd_cal'], dia: ['ch_rec_dia', 'ch_qtd_dia'], gr: ['gr_cmp'], canal: ['th_canal_cmp', 't_canal_cmp'], sac: ['ch_sac_qtd', 'ch_sac_rec'], esac: ['ch_esac_qtd', 'ch_esac_rec'] };
+const syncChips = (k) => document.querySelectorAll(`.pa-chip[data-cmp="${k}"]`).forEach((x) => x.setAttribute('aria-pressed', String(PA.state.cmp[k].has(Number(x.dataset.ano)))));
+document.querySelectorAll('.pa-chip[data-cmp]').forEach((b) => b.addEventListener('click', () => { const k = b.dataset.cmp, a = Number(b.dataset.ano), s = PA.state.cmp[k];
+  s.has(a) ? s.delete(a) : s.add(a); syncChips(k); CMPDRAW[k].forEach((n) => dash.draw(n)); }));
+document.querySelectorAll('[data-cmp-reset]').forEach((b) => b.addEventListener('click', () => { const k = b.dataset.cmpReset; PA.state.cmp[k].clear(); syncChips(k); CMPDRAW[k].forEach((n) => dash.draw(n)); }));
+document.querySelectorAll('[data-reset]').forEach((b) => b.addEventListener('click', () => {
+  const k = b.dataset.reset;
+  if (k === 'prod') { PA.state.prod = null; document.querySelectorAll('.pa-chip[data-prod]').forEach((x) => x.setAttribute('aria-pressed', 'false')); document.querySelectorAll('.pa-tipo').forEach((c) => { c.hidden = false; }); }
+  if (k === 'datas') { PA.state.ini = PA.state.fim = null; document.querySelectorAll('#d-ini,#d-fim').forEach((x) => { x.value = ''; }); ['ch_rec_cal', 'ch_qtd_cal'].forEach((n) => dash.draw(n)); }
+  if (k === 'socio') { PA.state.socio = ''; const s = document.getElementById('f-socio'); if (s) s.value = ''; dash.draw('t_emb'); }
+  if (k === 'socio2') { PA.state.socio2 = ''; const s = document.getElementById('f-socio2'); if (s) s.value = ''; dash.draw('t_emb_socio'); }
+  if (k === 'lote') { PA.state.lote = ''; const s = document.getElementById('f-lote'); if (s) s.value = ''; dash.draw('t_lotes'); }
+  if (k === 'cond') { PA.state.tipo = PA.state.ing = ''; document.querySelectorAll('#f-tipo,#f-ing').forEach((x) => { x.value = ''; }); ['t_cond', 'ce_of', 'ce_conv', 'ce_gringo'].forEach((n) => dash.draw(n)); }
+}));
+document.getElementById('f-lote')?.addEventListener('change', (e) => { PA.state.lote = e.target.value; dash.draw('t_lotes'); });
+document.querySelectorAll('#d-ini,#d-fim').forEach((i) => i.addEventListener('change', () => {
+  PA.state.ini = document.getElementById('d-ini')?.value || null; PA.state.fim = document.getElementById('d-fim')?.value || null;
+  ['ch_rec_cal', 'ch_qtd_cal'].forEach((n) => dash.draw(n));
+}));
+</script>
+
+<script>
+// ---------- números simples ----------
+const kv = (name, id, field, fmt, where) => dash.draw(name, (el) => {
+  const d = dash.data(id); if (d.status !== 'ok') return PA.fail(el, id);
+  const row = where ? d.data.find((r) => r[where[0]] === where[1]) : d.data[0];
+  el.textContent = row ? fmt(row[field]) : '—';
+});
+kv('atualizado', 'info', 'atualizado_em', (v) => { const [d, h] = String(v).split(' '); const [y, m, dd] = d.split('-'); return `${dd}/${m} às ${h}`; });
+kv('fat_total', 'kpi', 'fat_total', PA.brl); kv('lede_fat', 'kpi', 'fat_total', PA.brlK);
+kv('fat_main', 'kpi', 'fat_principais', PA.brl); kv('lede_main', 'kpi', 'fat_principais', PA.brlK);
+kv('pct_pix', 'kpi', 'pct_pix', PA.pct); kv('val_pix', 'kpi', 'fat_pix', PA.brl); kv('val_shotgun', 'kpi', 'fat_shotgun', PA.brl); kv('pct_shotgun', 'kpi', 'pct_shotgun', PA.pct);
+kv('qtd_total', 'kpi', 'qtd_total', PA.num); kv('qtd_main', 'kpi', 'qtd_principais', PA.num);
+kv('faltam', 'kpi', 'faltam', PA.num); kv('lede_falta', 'kpi', 'faltam', PA.num);
+kv('pct_gringo', 'gringos', 'pct', PA.pct, ['origem', 'Estrangeiro']); kv('qtd_gringo', 'gringos', 'qtd', PA.num, ['origem', 'Estrangeiro']);
+kv('m_pct_gringo', 'gringos', 'pct', PA.pct, ['origem', 'Estrangeiro']); kv('m_rec_gringo', 'gringos', 'receita', PA.brl, ['origem', 'Estrangeiro']);
+kv('m_rec_gringo_ce', 'gringos', 'receita_cond', PA.brl, ['origem', 'Estrangeiro']); kv('m_qtd_gringo_ce', 'gringos', 'qtd_cond', PA.num, ['origem', 'Estrangeiro']);
+kv('sac_total', 'sac_kpi', 'receita', PA.brl, ['produto', 'Total']);
+kv('inv_bruto', 'ads_kpi', 'investido_bruto', (v) => PA.brl.format(v)); kv('inv_liq', 'ads_kpi', 'investido_liquido', (v) => PA.brl.format(v));
+kv('m_lede_inv', 'ads_kpi', 'investido_bruto', (v) => PA.brl.format(v)); kv('m_lede_sac', 'sac_kpi', 'receita', PA.brlK, ['produto', 'Total']); kv('m_lede_sac_q', 'sac_kpi', 'qtd', PA.num, ['produto', 'Total']); kv('m_lede_gr', 'gringos', 'pct', PA.pct, ['origem', 'Estrangeiro']);
+kv('ads_rec_links', 'ads_kpi', 'receita_links', (v) => PA.brl.format(v)); 
+kv('ads_rec_main', 'ads_kpi', 'receita_links_principais', (v) => PA.brl.format(v));
+kv('ads_rec_pixel', 'ads_kpi', 'receita_pixel', (v) => PA.brl.format(v)); 
+kv('ads_compras_pixel', 'ads_kpi', 'compras_pixel', PA.num); kv('ads_q_meta', 'ads_kpi', 'compras_pixel', PA.num); kv('ads_r_meta', 'ads_kpi', 'receita_pixel', PA.brl);
+kv('wpp', 'leads', 'valor', PA.num, ['metrica', 'Contatos no WhatsApp em 2026']);
+kv('wpp_ads', 'leads', 'valor', PA.num, ['metrica', 'Leads vindos de anúncio']);
+
+kv('sac_total_q', 'sac_kpi', 'qtd', PA.num, ['produto', 'Total']);
+[['ads_q_total', 'qtd', 'links', PA.num], ['ads_q_com', 'qtd_comissionavel', 'links', PA.num], ['ads_q_nao', 'qtd_nao_comissionavel', 'links', PA.num],
+ ['ads_r_sac', 'receita', 'sac', PA.brl], ['ads_q_sac', 'qtd', 'sac', PA.num], ['ads_r_emb', 'receita', 'embaixador', PA.brl], ['ads_q_emb', 'qtd', 'embaixador', PA.num],
+ ['ads_r_px', 'receita', 'pixel', PA.brl], ['ads_q_px', 'qtd', 'pixel', PA.num], ['ads_c_sac', 'qtd_comissionavel', 'sac', PA.num], ['ads_c_emb', 'qtd_comissionavel', 'embaixador', PA.num]].forEach(([n, f, g, fmt]) => kv(n, 'ads_cards', f, fmt, ['grupo', g]));
+const mk = (tag, cls, text, attrs) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; Object.entries(attrs || {}).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
+const enc = (s) => encodeURIComponent(s);
+dash.draw('sac_circ', (el) => { el.replaceChildren(); const d = dash.data('sac_kpi'); if (d.status !== 'ok') return;
+  [['Passaporte', 'Passaporte'], ['Avulso Réveillon', 'Avulso'], ['Combo 31/12 + 02/01', 'Combo']].forEach(([p, lab]) => { const r = d.data.find((x) => x.produto === p) || { receita: 0, qtd: 0 };
+    const c = mk('div', 'pa-circle'); c.append(mk('b', null, PA.brlK(r.receita), { 'data-source': 'sac_kpi', 'data-field': 'receita', 'data-where': 'produto=' + enc(p) }), mk('span', null, lab),
+      mk('span', null, PA.num(r.qtd) + ' ingr.', { 'data-source': 'sac_kpi', 'data-field': 'qtd', 'data-where': 'produto=' + enc(p) })); el.append(c); }); });
+dash.draw('funil', (el) => { el.replaceChildren(); const d = dash.data('anuncios_funil'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; }
+  const rows = [...d.data].sort((a, b) => a.ordem - b.ordem); const cols = ['#1F8F7A', '#607F37', '#1E6BD6', '#6B4BA6', '#EF6351']; const max = Number(rows[0].valor);
+  rows.forEach((r, i) => { if (i) el.append(mk('div', 'pa-fconv', '↓ ' + PA.pct(Number(r.valor) / Number(rows[i - 1].valor)) + ' da etapa anterior'));
+    const s = mk('div', 'pa-fstep'); s.style.background = cols[i % cols.length]; s.style.width = (100 - i * 14) + '%';
+    s.append(mk('b', null, PA.num(r.valor), { 'data-source': 'anuncios_funil', 'data-field': 'valor', 'data-where': 'etapa=' + enc(r.etapa) }), mk('span', null, r.etapa)); el.append(s); }); });
+dash.draw('ads_tiles', (el) => { el.replaceChildren(); const d = dash.data('anuncios_meta'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; }
+  const show = ['Impressões', 'Alcance', 'Frequência', 'Cliques no link', 'CTR', 'CPC médio', 'CPM médio', 'Conversas iniciadas por mensagem', 'Custo por conversa iniciada', 'Compras atribuídas pelo pixel', 'Custo por compra', 'ROAS de compras no site (Meta)'];
+  show.forEach((m) => { const r = d.data.find((x) => x.metrica === m); if (!r) return; const t = mk('div', 'pa-tile');
+    t.append(mk('div', 'v', fmtMeta(r.valor, r), { 'data-source': 'anuncios_meta', 'data-field': 'valor', 'data-where': 'metrica=' + enc(m) }), mk('div', 'l', m.replace(' (Meta)', ''))); el.append(t); }); });
+dash.draw('ig_tiles', (el) => { el.replaceChildren(); const d = dash.data('instagram'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; }
+  const g = (m) => d.data.find((x) => x.metrica === m) || { valor: 0 };
+  const short = (v) => v >= 1e3 ? (v / 1e3).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : PA.num(v);
+  const tile = (m, sub, split) => { const r = g(m); const t = mk('div', 'pa-tile'); const top = mk('div');
+    top.append(mk('span', 'v', m.includes('%') ? r.valor.toLocaleString('pt-BR') + '%' : short(r.valor), { 'data-source': 'instagram', 'data-field': 'valor', 'data-where': 'metrica=' + enc(m) }));
+    if (r.variacao_pct != null) top.append(mk('span', 'd', '↑ ' + Number(r.variacao_pct).toLocaleString('pt-BR') + '%'));
+    t.append(top, mk('div', 'l', m.replace(' (%)', '')));
+    if (split) { const [a, b] = split.map((s) => g(s).valor); const bar = mk('div', 'split'); const x = mk('span'); x.style.cssText = `width:${a / (a + b) * 100}%;background:#607F37`; const y = mk('span'); y.style.cssText = `width:${b / (a + b) * 100}%;background:#EF6351`;
+      bar.append(x, y); t.append(bar, mk('div', 'leg', `Orgânico ${short(a)} · Anúncios ${short(b)}`)); }
+    (sub || []).forEach((s) => { const r2 = g(s); t.append(mk('div', 'leg', `${s}: ${s.includes('%') ? r2.valor.toLocaleString('pt-BR') + '%' : short(r2.valor)}${r2.variacao_pct != null ? ' (↑ ' + Number(r2.variacao_pct).toLocaleString('pt-BR') + '%)' : ''}`)); });
+    el.append(t); };
+  tile('Visualizações', null, ['Visualizações orgânicas', 'Visualizações de anúncios']);
+  tile('Alcance', null, ['Alcance orgânico', 'Alcance de anúncios']);
+  tile('Novos seguidores', ['Deixaram de seguir', 'Seguidores totais']);
+  tile('Interações com conteúdo', ['Visitas ao perfil']);
+  tile('Conversas iniciadas', ['Novos contatos', 'Taxa de resposta (%)']); });
+dash.draw('cap', (el) => { el.textContent = PA.num(1242); });
+dash.draw('meta_rec_v', (el) => { el.textContent = PA.brlK(3910917); });
+dash.draw('tm_meta', (el) => { el.textContent = PA.brl(3148.89); });
+kv('meta_rec', 'kpi', 'pct_meta_receita', PA.pct); kv('tm', 'kpi', 'ticket_medio', PA.brl);
+[['q_pass', 'Passaporte'], ['q_av', 'Avulso Réveillon'], ['q_combo', 'Combo 31/12 + 02/01']].forEach(([n, p]) => kv(n, 'kpi_prod', 'qtd', PA.num, ['produto', p]));
+[['r_pass', 'Passaporte'], ['r_av', 'Avulso Réveillon'], ['r_combo', 'Combo 31/12 + 02/01']].forEach(([n, p]) => kv(n, 'kpi_prod', 'receita', PA.brl, ['produto', p]));
+dash.draw('contagem', { mount: (el) => { const tick = () => { const ms = Math.max(0, Date.parse('2026-12-26T16:00:00-03:00') - Date.now());
+    const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
+    el.replaceChildren(...[[d, d === 1 ? 'dia' : 'dias'], [String(h).padStart(2, '0'), 'horas'], [String(m).padStart(2, '0'), 'min']].map(([v, l]) => { const c = document.createElement('div'); const b = document.createElement('b'); b.textContent = v; const s = document.createElement('span'); s.textContent = l; c.append(b, s); return c; })); };
+    tick(); return setInterval(tick, 30000); }, update: () => {}, unmount: (el, t) => clearInterval(t) });
+const bar = (name, parts) => dash.draw(name, (el) => {
+  const d = dash.data('kpi'); el.replaceChildren(); if (d.status !== 'ok' || !d.data[0]) return;
+  parts(d.data[0]).forEach(([w, c]) => { const s = document.createElement('span'); s.style.width = (w * 100) + '%'; s.style.background = c; el.append(s); });
+});
+bar('bar_pix', (r) => [[r.pct_shotgun, '#F2E3C9'], [r.pct_pix, '#F2C94C']]);
+bar('bar_cap', (r) => [[Math.min(1, r.pct_cap), '#F2E3C9']]);
+bar('bar_meta', (r) => [[Math.min(1, r.pct_meta_receita), '#161513']]);
+
+// ---------- tabelas ----------
+const table = (name, id, cols, filter) => dash.draw(name, (tb) => {
+  const d = dash.data(id); tb.replaceChildren();
+  if (d.status !== 'ok') { const tr = tb.insertRow(); const td = tr.insertCell(); td.colSpan = cols.length; td.textContent = d.status === 'error' ? 'Não carregou' : 'Carregando…'; return; }
+  (filter ? d.data.filter(filter) : d.data).forEach((r) => { const tr = tb.insertRow(); cols.forEach(([k, f]) => { const td = tr.insertCell(); td.textContent = f ? f(r[k], r) : r[k]; if (f) td.className = 'n'; }); });
+});
+table('t_canal', 'canal_share', [['canal'], ['qtd', PA.num], ['receita', (v) => PA.brl.format(v)], ['pct', PA.pct]]);
+table('t_cli_barco', 'clientes_barco', [['produto'], ['clientes', PA.num], ['com_barco', (v, r) => `${PA.num(v)} (${PA.pct(r.clientes ? v / r.clientes : 0)})`]]);
+table('t_barcos', 'barcos', [['barco'], ['ingressos_barco', PA.num], ['com_passaporte', PA.num], ['com_combo', PA.num], ['sem_cruzamento', PA.num]]);
+table('t_roi', 'ads_roi', [['base'], ['roi', (v) => v.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'x'], ['roas', (v) => v.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'x']]);
+const fmtMeta = (v, r) => r.unidade === 'R$' ? Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : r.unidade === '%' ? Number(v).toLocaleString('pt-BR') + '%' : r.unidade === 'x' ? Number(v).toLocaleString('pt-BR') + 'x' : PA.num(v);
+
+const n1 = (v) => Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+kv('r_precisa', 'ritmo', 'por_dia_necessario', n1); kv('r_faltam', 'ritmo', 'faltam', PA.num); kv('r_dias', 'ritmo', 'dias', PA.num);
+kv('r_media', 'ritmo', 'media_7d', n1); kv('r_7d', 'ritmo', 'vendidos_7d', PA.num); kv('r_proj', 'ritmo', 'projecao', PA.num);
+table('t_lotes', 'vendas_lote', [['inicio'], ['ingresso'], ['qtd', PA.num], ['valor_un', (v) => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })], ['receita', (v) => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })]], (r) => !PA.state.lote || r.produto === PA.state.lote);
+
+kv('c_reemb_q', 'cancel_kpi', 'qtd', PA.num, ['status', 'Reembolsado']); kv('c_reemb_v', 'cancel_kpi', 'valor', PA.brl, ['status', 'Reembolsado']); kv('c_reemb_p', 'cancel_kpi', 'pct', PA.pct, ['status', 'Reembolsado']);
+kv('c_rev_q', 'cancel_kpi', 'qtd', PA.num, ['status', 'Revendido']); kv('c_rev_p', 'cancel_kpi', 'pct', PA.pct, ['status', 'Revendido']);
+kv('tx_comp', 'taxas', 'taxa_comprador', PA.brl); kv('tx_prod', 'taxas', 'custo_produtor', PA.brl); kv('tx_pct', 'taxas_kpi', 'pct', PA.pct);
+table('t_cancel', 'cancel_prod', [['status'], ['produto'], ['qtd', PA.num], ['valor', (v) => PA.brl(v)]]);
+dash.draw('ch_publico_dia', (el) => { const d = dash.data('publico_dia'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
+  const rows = [...d.data].sort((a, b) => a.ordem - b.ordem); el.querySelector('svg')?.remove(); el.querySelector('.pa-legend')?.remove();
+  const W = Math.max(300, el.clientWidth || 300), H = 270, mt = 22, mb = 58, ml = 8; const x = d3.scaleBand().domain(rows.map((r) => r.dia)).range([ml, W - 8]).padding(.25);
+  const max = d3.max(rows, (r) => Number(r.passaporte) + Number(r.ingressos_do_dia)) || 1; const y = d3.scaleLinear().domain([0, max]).range([H - mb, mt]);
+  const svg = d3.select(el).insert('svg', ':first-child').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Público possível por dia do festival');
+  rows.forEach((r) => { const p = Number(r.passaporte), q = Number(r.ingressos_do_dia), bx = x(r.dia), bw = x.bandwidth();
+    svg.append('rect').attr('x', bx).attr('width', bw).attr('y', y(p)).attr('height', y(0) - y(p)).attr('rx', 6).attr('fill', '#B9CB98');
+    svg.append('rect').attr('x', bx).attr('width', bw).attr('y', y(p + q)).attr('height', y(p) - y(p + q)).attr('rx', 6).attr('fill', '#EF6351');
+    svg.append('text').attr('x', bx + bw / 2).attr('y', y(p + q) - 6).attr('text-anchor', 'middle').style('fill', '#161513').style('font-weight', 700).text(PA.num(p + q));
+    svg.append('text').attr('x', bx + bw / 2).attr('y', H - mb + 16).attr('text-anchor', 'middle').style('fill', '#161513').style('font-weight', 700).text(r.dia);
+    svg.append('text').attr('x', bx + bw / 2).attr('y', H - mb + 30).attr('text-anchor', 'middle').text(r.festa.length > 14 ? r.festa.slice(0, 13) + '…' : r.festa);
+    if (Number(r.barco)) svg.append('text').attr('x', bx + bw / 2).attr('y', H - mb + 44).attr('text-anchor', 'middle').style('fill', '#6B4BA6').style('font-weight', 600).text('⛵ ' + PA.num(r.barco)); });
+  const L = document.createElement('div'); L.className = 'pa-legend'; [['Passaporte (podem vir)', '#B9CB98'], ['Ingressos do dia', '#EF6351'], ['Barco do dia', '#6B4BA6']].forEach(([n, c]) => { const s = document.createElement('span'); const i = document.createElement('i'); i.style.background = c; s.append(i, document.createTextNode(n)); L.append(s); }); el.append(L); });
+dash.draw('ch_checkin', (el) => { const d = dash.data('checkin'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; }
+  const rows = d.data.filter((r) => r.data && Number(r.qtd) > 0);
+  if (!rows.length) { el.querySelector('svg')?.remove(); el.textContent = 'O check-in começa em 26/12. A partir daí, este gráfico mostra quantas pessoas entraram em cada dia e em cada hora.'; return; }
+  if (el.firstChild?.nodeType === 3) el.textContent = '';
+  const byDay = d3.rollups(rows, (v) => d3.sum(v, (r) => Number(r.qtd)), (r) => r.data).sort((a, b) => d3.ascending(a[0], b[0]));
+  PACH.hbars(el, byDay.map(([k, v]) => ({ k: k.slice(8, 10) + '/' + k.slice(5, 7), v })), { fmt: PA.num, label: 'Entradas por dia', colorOf: () => '#1F8F7A' }); });
+
+table('t_emb', 'vendas_embaixador', [['embaixador'], ['socio'], ['canal'], ['qtd', PA.num], ['receita', (v) => PA.brl(v)]], (r) => !PA.state.socio || r.socio === PA.state.socio);
+table('t_esac', 'vendas_embaixador', [['embaixador'], ['qtd', PA.num], ['receita', (v) => PA.brl(v)]], (r) => r.canal === 'Embaixador SAC');
+table('t_emb_socio', 'embaixadores_socio', [['socio'], ['cadastrados', PA.num], ['novos_30d', PA.num], ['ultimo_cadastro', null], ['vendas_7d', PA.num], ['vendas_30d', PA.num]], (r) => !PA.state.socio2 || r.socio === PA.state.socio2);
+table('t_emb_anos', 'emb_anos', [['ano'], ['cadastrados', PA.num], ['ativos', PA.num], ['vendas_emb', PA.num], ['por_ativo', (v) => Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 1 })]]);
+table('t_lotes_meta', 'lotes', [['produto'], ['lote'], ['meta', PA.num], ['vendido', PA.num], ['falta', PA.num]], (r) => Number(r.meta) > 0);
+table('t_rec', 'rec_metas', [['taxa', (v) => PA.pct(v)], ['clientes', PA.num], ['faltam', PA.num]]);
+kv('rec_taxa', 'recorrencia', 'taxa', PA.pct); kv('rec_ret', 'recorrencia', 'retidos', PA.num); kv('rec_base', 'recorrencia', 'base', PA.num);
+kv('esac_total', 'esac_kpi', 'receita', PA.brl, ['produto', 'Total']); kv('esac_q', 'esac_kpi', 'qtd', PA.num, ['produto', 'Total']);
+kv('esac_n', 'embaixadores_socio', 'cadastrados', PA.num, ['socio', 'Julia Bueno (SAC)']);
+dash.draw('dia_hoje', (el) => { el.textContent = String(Math.floor((Date.now() - Date.parse('2026-05-09T03:00:00Z')) / 864e5) + 1); });
+const selFrom = (name, id, key, stateKey, redraw, label) => dash.draw(name, (s) => { const d = dash.data(id); const vals = d.status === 'ok' ? [...new Set(d.data.map((r) => r[key]))].sort() : [];
+  s.replaceChildren(new Option(label, ''), ...vals.map((v) => new Option(v, v))); s.value = PA.state[stateKey]; s.onchange = () => { PA.state[stateKey] = s.value; dash.draw(redraw); }; });
+selFrom('sel_socio', 'vendas_embaixador', 'socio', 'socio', 't_emb', 'Todos');
+selFrom('sel_socio2', 'embaixadores_socio', 'socio', 'socio2', 't_emb_socio', 'Todos');
+dash.draw('esac_circ', (el) => { el.replaceChildren(); const d = dash.data('esac_kpi'); if (d.status !== 'ok') return;
+  [['Passaporte', 'Passaporte'], ['Avulso Réveillon', 'Avulso'], ['Combo 31/12 + 02/01', 'Combo']].forEach(([p, lab]) => { const r = d.data.find((x) => x.produto === p) || { receita: 0, qtd: 0 };
+    const c = mk('div', 'pa-circle'); c.append(mk('b', null, PA.brlK(r.receita), { 'data-source': 'esac_kpi', 'data-field': 'receita', 'data-where': 'produto=' + enc(p) }), mk('span', null, lab), mk('span', null, PA.num(r.qtd) + ' ingr.')); el.append(c); }); });
+dash.draw('gr_cmp', (el) => { el.replaceChildren(); const d = dash.data('hist_estrangeiros'); if (d.status !== 'ok') return;
+  [...PA.state.cmp.gr].sort().reverse().forEach((a) => { const r = d.data.find((x) => Number(x.ano) === a); if (!r) return; const s = mk('div', null, `${a}: ${PA.pct(Number(r.estrangeiros) / Number(r.total))} (${PA.num(r.estrangeiros)} de ${PA.num(r.total)} com telefone)`); s.style.color = 'inherit'; el.append(s); }); });
+dash.draw('th_canal_cmp', (el) => { const anos = [2027, ...[...PA.state.cmp.canal].sort().reverse()]; const tr = document.createElement('tr');
+  tr.append(mk('th', null, 'Canal', { 'data-field': 'canal' })); anos.forEach((a) => { tr.append(mk('th', 'n', `${a} ingr.`, { 'data-field': 'qtd' }), mk('th', 'n', `${a} receita`, { 'data-field': 'receita' })); }); el.replaceChildren(tr); });
+dash.draw('t_canal_cmp', (tb) => { tb.replaceChildren(); const d = dash.data('canal_cmp'); if (d.status !== 'ok') return; const anos = [2027, ...[...PA.state.cmp.canal].sort().reverse()];
+  ['Embaixador SAC', 'Embaixador', 'SAC', 'Sócio', 'Artista'].forEach((c) => { const tr = tb.insertRow(); tr.insertCell().textContent = c;
+    anos.forEach((a) => { const r = d.data.find((x) => x.canal === c && Number(x.ano) === a); const q = tr.insertCell(); q.className = 'n'; q.textContent = r ? PA.num(r.qtd) : '—'; const v = tr.insertCell(); v.className = 'n'; v.textContent = r ? PA.brlK(r.receita) : '—'; }); }); });
+const condF = (r) => (!PA.state.tipo || r.tipo === PA.state.tipo) && (!PA.state.ing || r.ingresso === PA.state.ing);
+table('t_cond', 'condicoes_especiais', [['tipo'], ['ingresso'], ['ofertas', PA.num], ['converteram', PA.num], ['estrangeiros', PA.num], ['estrangeiros_converteram', PA.num]], condF);
+const condSum = (name, k) => dash.draw(name, (el) => { const d = dash.data('condicoes_especiais'); if (d.status !== 'ok') return PA.fail(el, 'condicoes_especiais'); const rows = d.data.filter(condF);
+  const v = rows.reduce((a, r) => a + Number(r[k]), 0); const of = rows.reduce((a, r) => a + Number(r.ofertas), 0);
+  el.textContent = k === 'ofertas' ? PA.num(v) : `${PA.num(v)} (${PA.pct(of ? v / of : 0)})`; });
+condSum('ce_of', 'ofertas'); condSum('ce_conv', 'converteram'); condSum('ce_gringo', 'estrangeiros_converteram');
+const sel = (name, key, label, stateKey, redraw) => dash.draw(name, (s) => {
+  const d = dash.data('condicoes_especiais'); const vals = d.status === 'ok' ? [...new Set(d.data.map((r) => r[key]))].sort() : [];
+  s.replaceChildren(new Option(label, ''), ...vals.map((v) => new Option(v, v))); s.value = PA.state[stateKey];
+  s.onchange = () => { PA.state[stateKey] = s.value; redraw.forEach((n) => dash.draw(n)); };
+});
+sel('sel_tipo', 'tipo', 'Todas', 'tipo', ['t_cond', 'ce_of', 'ce_conv', 'ce_gringo']);
+sel('sel_ing', 'ingresso', 'Todos', 'ing', ['t_cond', 'ce_of', 'ce_conv', 'ce_gringo']);
+</script>
+
+<script>
+// ---------- gráficos ----------
+window.PACH = (() => {
+  const tip = (el) => { let t = el.querySelector('.pa-tip'); if (!t) { t = document.createElement('div'); t.className = 'pa-tip'; t.hidden = true; el.append(t); } return t; };
+  const show = (el, t, ev, lines) => { t.replaceChildren(...lines.map((l) => { const d = document.createElement('div'); d.textContent = l; return d; })); t.hidden = false;
+    const r = el.getBoundingClientRect(); let x = ev.clientX - r.left + 12, y = ev.clientY - r.top - 10; if (x > r.width - 170) x = ev.clientX - r.left - 170; t.style.left = x + 'px'; t.style.top = Math.max(0, y) + 'px'; };
+  const svgOf = (el, h, label) => { el.querySelector('svg')?.remove(); const w = Math.max(280, el.clientWidth || 300);
+    return [d3.select(el).insert('svg', ':first-child').attr('width', '100%').attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img').attr('aria-label', label), w]; };
+  const legend = (el, items) => { el.querySelector('.pa-legend')?.remove(); const L = document.createElement('div'); L.className = 'pa-legend';
+    items.forEach(([n, c]) => { const s = document.createElement('span'); const i = document.createElement('i'); i.style.background = c; s.append(i, document.createTextNode(n)); L.append(s); }); el.append(L); };
+  // linha acumulada por x (data ou número)
+  const line = (el, pts, { isDate, fmtY, label, color, extra = [] }) => {
+    if (!pts.length) { el.querySelector('svg')?.remove(); el.querySelector('.pa-legend')?.remove(); el.textContent = 'Sem vendas no período escolhido.'; return; }
+    if (!el.querySelector('svg') && el.firstChild?.nodeType === 3) el.textContent = '';
+    const H = 250, [svg, W] = svgOf(el, H, label); const allPts = [pts, ...extra.map((e) => e.pts)].flat(); const yMax = d3.max(allPts, (p) => p.y) || 1;
+    const y = d3.scaleLinear().domain([0, yMax]).nice().range([H - 26, 10]);
+    const ticksY = y.ticks(5); const tmp = svg.append('text'); const ml = (d3.max(ticksY, (v) => tmp.text(fmtY(v)).node().getComputedTextLength()) || 40) + 12; tmp.remove();
+    const x = (isDate ? d3.scaleUtc() : d3.scaleLinear()).domain(d3.extent(allPts, (p) => p.x)).range([ml, W - 28]);
+    svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - 26})`).call(isDate ? d3.axisBottom(x).ticks(Math.max(2, Math.floor(W / 90))).tickFormat(d3.utcFormat('%d/%m')) : d3.axisBottom(x).ticks(Math.max(2, Math.floor(W / 70))));
+    svg.append('g').attr('class', 'axis').attr('transform', `translate(${ml},0)`).call(d3.axisLeft(y).ticks(5).tickFormat((v) => fmtY(v))).call((g) => g.selectAll('.tick line').clone().attr('x2', W - ml - 28).attr('stroke', '#e3d3b2'));
+    extra.forEach((e) => svg.append('path').datum(e.pts).attr('fill', 'none').attr('stroke', e.color).attr('stroke-width', 2).attr('stroke-dasharray', '5 4').attr('d', d3.line().x((p) => x(p.x)).y((p) => y(p.y))));
+    svg.append('path').datum(pts).attr('fill', color).attr('fill-opacity', .14).attr('d', d3.area().x((p) => x(p.x)).y0(y(0)).y1((p) => y(p.y)));
+    svg.append('path').datum(pts).attr('fill', 'none').attr('stroke', color).attr('stroke-width', 2.4).attr('d', d3.line().x((p) => x(p.x)).y((p) => y(p.y)));
+    const last = pts.at(-1); svg.append('circle').attr('cx', x(last.x)).attr('cy', y(last.y)).attr('r', 4.5).attr('fill', color);
+    const t = tip(el); const dot = svg.append('circle').attr('r', 4).attr('fill', '#161513').attr('visibility', 'hidden');
+    svg.append('rect').attr('x', ml).attr('y', 0).attr('width', W - ml).attr('height', H).attr('fill', 'transparent')
+      .on('pointermove', (ev) => { const [mx] = d3.pointer(ev); const xv = x.invert(mx); const i = Math.min(pts.length - 1, d3.bisector((p) => p.x).center(pts, xv)); const p = pts[i];
+        dot.attr('cx', x(p.x)).attr('cy', y(p.y)).attr('visibility', 'visible'); const ex = extra.map((e) => { const q = e.pts[Math.min(e.pts.length - 1, d3.bisector((z) => z.x).center(e.pts, p.x))]; return q ? `${e.label}: ${fmtY(q.y, true)}` : null; }).filter(Boolean);
+        show(el, t, ev, [isDate ? d3.utcFormat('%d/%m/%Y')(p.x) : `Dia ${p.x} de venda`, `2027: ${fmtY(p.y, true)}`, `No dia: ${fmtY(p.d, true)}`, ...ex]); })
+      .on('pointerleave', () => { t.hidden = true; dot.attr('visibility', 'hidden'); });
+    legend(el, [['2027', color], ...extra.map((e) => [e.label, e.color])]);
+  };
+  // barras horizontais
+  const hbars = (el, rows, { fmt, label, colorOf }) => {
+    const H = rows.length * 34 + 10, [svg, W] = svgOf(el, H, label);
+    const tmp = svg.append('text'); const lw = d3.max(rows, (r) => tmp.text(r.k).node().getComputedTextLength()) + 12 || 100; tmp.remove();
+    const x = d3.scaleLinear().domain([0, d3.max(rows, (r) => r.v) || 1]).range([0, Math.max(40, W - lw - 110)]); const t = tip(el);
+    const g = svg.selectAll('g.r').data(rows).join('g').attr('class', 'r').attr('transform', (r, i) => `translate(0,${i * 34 + 6})`);
+    g.append('text').attr('x', 0).attr('y', 16).text((r) => r.k);
+    g.append('rect').attr('x', lw).attr('y', 3).attr('height', 20).attr('rx', 6).attr('width', (r) => Math.max(2, x(r.v))).attr('fill', (r) => colorOf(r))
+      .on('pointermove', (ev, r) => show(el, t, ev, [r.k, fmt(r.v), ...(r.extra || [])])).on('pointerleave', () => { t.hidden = true; });
+    g.append('text').attr('x', (r) => lw + Math.max(2, x(r.v)) + 6).attr('y', 17).text((r) => r.lab ?? fmt(r.v)).style('fill', '#161513').style('font-weight', 600);
+  };
+  // barras empilhadas verticais por grupo
+  const stack = (el, groups, keys, { fmt, label }) => {
+    const H = 240, [svg, W] = svgOf(el, H, label); const data = groups.map((g) => ({ g: g.g, ...g.v }));
+    const st = d3.stack().keys(keys)(data); const yMax = d3.max(data, (d) => keys.reduce((a, k) => a + (d[k] || 0), 0)) || 1;
+    const y = d3.scaleLinear().domain([0, yMax]).nice().range([H - 26, 12]);
+    const tmp = svg.append('text'); const ml = (d3.max(y.ticks(4), (v) => tmp.text(fmt(v)).node().getComputedTextLength()) || 30) + 12; tmp.remove();
+    const x = d3.scaleBand().domain(data.map((d) => d.g)).range([ml, W - 10]).padding(.35); const t = tip(el);
+    svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - 26})`).call(d3.axisBottom(x));
+    svg.append('g').attr('class', 'axis').attr('transform', `translate(${ml},0)`).call(d3.axisLeft(y).ticks(4).tickFormat((v) => fmt(v)));
+    st.forEach((s) => svg.append('g').selectAll('rect').data(s).join('rect').attr('x', (d) => x(d.data.g)).attr('width', x.bandwidth())
+      .attr('y', (d) => y(d[1])).attr('height', (d) => Math.max(0, y(d[0]) - y(d[1]))).attr('fill', PA.COL[s.key] || '#999')
+      .on('pointermove', (ev, d) => show(el, t, ev, [`${d.data.g} · ${s.key}`, fmt(d[1] - d[0], true)])).on('pointerleave', () => { t.hidden = true; }));
+    data.forEach((d) => { const tot = keys.reduce((a, k) => a + (d[k] || 0), 0); svg.append('text').attr('x', x(d.g) + x.bandwidth() / 2).attr('y', y(tot) - 5).attr('text-anchor', 'middle').style('fill', '#161513').style('font-weight', 700).text(fmt(tot, true)); });
+    legend(el, keys.map((k) => [k, PA.COL[k]]));
+  };
+  // rosca
+  const donut = (el, rows, { label, colors }) => {
+    const H = 220, [svg, W] = svgOf(el, H, label); const R = Math.min(95, H / 2 - 10); const tot = d3.sum(rows, (r) => r.v) || 1; const t = tip(el);
+    const g = svg.append('g').attr('transform', `translate(${W / 2},${H / 2})`);
+    const arcs = d3.pie().sort(null).value((r) => r.v)(rows);
+    g.selectAll('path').data(arcs).join('path').attr('d', d3.arc().innerRadius(R * .55).outerRadius(R)).attr('fill', (a, i) => colors[i]).attr('stroke', '#FBF4E6').attr('stroke-width', 2)
+      .on('pointermove', (ev, a) => show(el, t, ev, [a.data.k, `${PA.num(a.data.v)} (${PA.pct(a.data.v / tot)})`])).on('pointerleave', () => { t.hidden = true; });
+    legend(el, rows.map((r, i) => [`${PA.pct(r.v / tot)} ${r.k} (${PA.num(r.v)})`, colors[i]]));
+  };
+  const heat = (el, rows) => { const DIAS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']; const m = new Map(rows.map((r) => [r.dia_semana + '-' + r.hora, Number(r.qtd)]));
+    const max = d3.max(rows, (r) => Number(r.qtd)) || 1; const W0 = Math.max(280, el.clientWidth || 300); const ml = 32, cw = (W0 - ml - 4) / 24, ch = 20, H = 7 * ch + 22;
+    const [svg, W] = svgOf(el, H, 'Vendas por dia da semana e hora'); const t = tip(el); const col = d3.scaleLinear().domain([0, max]).range(['#F6EBD5', '#3d5421']);
+    DIAS.forEach((d, i) => { svg.append('text').attr('x', 0).attr('y', i * ch + 14).text(d);
+      for (let h = 0; h < 24; h++) { const v = m.get(i + '-' + h) || 0; svg.append('rect').attr('x', ml + h * cw).attr('y', i * ch).attr('width', cw - 1).attr('height', ch - 2).attr('rx', 3).attr('fill', col(v))
+        .on('pointermove', (ev) => show(el, t, ev, [`${d} às ${h}h`, `${PA.num(v)} ingressos`])).on('pointerleave', () => { t.hidden = true; }); } });
+    [0, 6, 12, 18, 23].forEach((h) => svg.append('text').attr('x', ml + h * cw + cw / 2).attr('y', H - 4).attr('text-anchor', 'middle').text(h + 'h')); };
+  return { line, hbars, stack, donut, heat };
+})();
+
+const MAINP = ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'];
+const fmtR = (v, full) => full ? PA.brl.format(v) : PA.brlK(v);
+const fmtN = (v) => PA.num(v);
+const series = (rows, key, xKey, isDate) => { const m = d3.rollup(rows, (v) => d3.sum(v, (r) => Number(r[key])), (r) => r[xKey]);
+  let acc = 0; return [...m].sort((a, b) => d3.ascending(a[0], b[0])).map(([x, d]) => { acc += d; return { x: isDate ? new Date(x + 'T00:00:00Z') : Number(x), y: acc, d }; }); };
+const histPts = (id, key, xKey, ano, isDate) => { const d = dash.data(id); if (d.status !== 'ok') return [];
+  const pts = d.data.filter((r) => Number(r.ano) === ano).map((r) => ({ x: isDate ? new Date(r[xKey] + 'T00:00:00Z') : Number(r[xKey]), y: Number(r[key + '_acum']) })).sort((a, b) => a.x - b.x);
+  let m = 0; const out = []; for (const q of pts) { if (q.y === 0 && m > 0) break; m = Math.max(m, q.y); out.push({ ...q, y: m }); } return out; };
+const calDraw = (name, key, fmt, color) => dash.draw(name, (el) => { const d = dash.data('vendas_dia'); if (d.status !== 'ok') { el.querySelector('svg')?.remove(); el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; }
+  let pts = series(d.data, key, 'data', true); const { ini, fim } = PA.state;
+  let extra = [...PA.state.cmp.cal].sort().reverse().map((a) => ({ label: String(a), color: PA.ANOCOL[a], pts: histPts('hist_cal', key === 'qtd' ? 'qtd' : 'receita', 'data', a, true) }));
+  const cut = (arr) => { let r = arr; if (ini) { const i0 = new Date(ini + 'T00:00:00Z'); const base = (r.filter((p) => p.x < i0).at(-1) || { y: 0 }).y; r = r.filter((p) => p.x >= i0).map((p) => ({ ...p, y: p.y - base })); } if (fim) { const f0 = new Date(fim + 'T00:00:00Z'); r = r.filter((p) => p.x <= f0); } return r; };
+  pts = cut(pts); extra = extra.map((e) => ({ ...e, pts: cut(e.pts) })).filter((e) => e.pts.length);
+  if (el.firstChild?.nodeType === 3) el.textContent = '';
+  PACH.line(el, pts, { isDate: true, fmtY: fmt, label: name, color, extra }); });
+calDraw('ch_rec_cal', 'receita', fmtR, '#607F37'); calDraw('ch_qtd_cal', 'qtd', fmtN, '#1E6BD6');
+const diaDraw = (name, key, fmt, color) => dash.draw(name, (el) => { const d = dash.data('vendas_dia'); if (d.status !== 'ok') { el.querySelector('svg')?.remove(); el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; }
+  if (el.firstChild?.nodeType === 3) el.textContent = '';
+  const extra = [...PA.state.cmp.dia].sort().reverse().map((a) => ({ label: String(a), color: PA.ANOCOL[a], pts: histPts('hist_dia', key === 'qtd' ? 'qtd' : 'receita', 'dia_venda', a, false) })).filter((e) => e.pts.length);
+  PACH.line(el, series(d.data, key, 'dia_venda', false), { isDate: false, fmtY: fmt, label: name, color, extra }); });
+diaDraw('ch_rec_dia', 'receita', fmtR, '#EF6351'); diaDraw('ch_qtd_dia', 'qtd', fmtN, '#6B4BA6');
+dash.draw('ch_canal', (el) => { const d = dash.data('canal_share'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
+  const C = { SAC: '#607F37', 'SAC condição especial': '#1F8F7A', Embaixador: '#1E6BD6', 'Sócio': '#6B4BA6', 'Anúncio': '#EF6351', Outros: '#b9a782' };
+  PACH.hbars(el, d.data.map((r) => ({ k: r.canal, v: r.pct, lab: `${PA.pct(r.pct)} · ${PA.num(r.qtd)}`, extra: [`${PA.num(r.qtd)} ingressos`, PA.brl.format(r.receita)] })), { fmt: PA.pct, label: 'Parte de cada canal nos ingressos principais', colorOf: (r) => C[r.k] || '#999' }); });
+dash.draw('ch_genero', (el) => { const d = dash.data('genero'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
+  PACH.donut(el, d.data.map((r) => ({ k: r.genero, v: Number(r.qtd) })), { label: 'Gênero dos compradores', colors: ['#1E6BD6', '#EF6351', '#F2C94C'] }); });
+dash.draw('ch_paises', (el) => { const d = dash.data('paises'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
+  PACH.hbars(el, d.data.slice(0, 8).map((r) => ({ k: r.pais, v: Number(r.qtd) })), { fmt: PA.num, label: 'Países dos compradores estrangeiros', colorOf: () => '#1F8F7A' }); });
+const origDraw = (name, key, fmt) => dash.draw(name, (el) => { const d = dash.data('origem_prod'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
+  const groups = ['Brasil', 'Estrangeiro'].map((g) => ({ g: g === 'Brasil' ? 'Brasileiros' : 'Estrangeiros', v: Object.fromEntries(MAINP.map((p) => [p, d3.sum(d.data.filter((r) => r.origem === g && r.produto === p), (r) => r[key])])) }));
+  PACH.stack(el, groups, MAINP, { fmt, label: name }); });
+
+const simpleBars = (name, id, keyF, n, color, sortF) => dash.draw(name, (el) => { const d = dash.data(id); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
+  let rows = d.data.map((r) => ({ k: r[keyF], v: Number(r.qtd) })); if (sortF) rows = sortF(rows, d.data); rows = rows.slice(0, n); const tot = d3.sum(d.data, (r) => Number(r.qtd)) || 1;
+  PACH.hbars(el, rows.map((r) => ({ ...r, lab: `${PA.num(r.v)} · ${PA.pct(r.v / tot)}` })), { fmt: PA.num, label: name, colorOf: () => color }); });
+simpleBars('ch_idade', 'idade', 'faixa', 8, '#6B4BA6', (rows, data) => rows.map((r, i) => ({ ...r, o: data[i].ordem })).sort((a, b) => a.o - b.o));
+simpleBars('ch_estados', 'estados', 'estado', 8, '#1E6BD6');
+simpleBars('ch_cidades', 'cidades', 'cidade', 8, '#1F8F7A');
+dash.draw('ch_ticket', (el) => { const d = dash.data('canal_share'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
+  const C = { SAC: '#607F37', 'SAC condição especial': '#1F8F7A', Embaixador: '#1E6BD6', 'Sócio': '#6B4BA6', 'Anúncio': '#EF6351', Outros: '#b9a782' };
+  PACH.hbars(el, [...d.data].sort((a, b) => b.ticket_medio - a.ticket_medio).map((r) => ({ k: r.canal, v: r.ticket_medio, extra: [`${PA.num(r.qtd)} ingressos`] })), { fmt: (v) => PA.brl(v), label: 'Ticket médio por canal', colorOf: (r) => C[r.k] || '#999' }); });
+dash.draw('ch_heat', (el) => { const d = dash.data('hora_semana'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = ''; PACH.heat(el, d.data); });
+origDraw('ch_orig_rec', 'receita', fmtR); origDraw('ch_orig_qtd', 'qtd', fmtN);
+const tipoDraw = (name, canal, cmpKey, key, fmt) => dash.draw(name, (el) => { const d = dash.data('tipo_cmp'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
+  const anos = [2027, ...[...PA.state.cmp[cmpKey]].sort().reverse()]; const rows = [];
+  MAINP.forEach((p) => anos.forEach((a) => { const v = d3.sum(d.data.filter((r) => r.canal === canal && r.produto === p && Number(r.ano) === a), (r) => r[key]); rows.push({ k: anos.length > 1 ? `${p.replace(' 31/12 + 02/01', '')} · ${a}` : p, v, a, p }); }));
+  PACH.hbars(el, rows, { fmt: (v) => fmt(v, true), label: name, colorOf: (r) => r.a === 2027 ? PA.COL[r.p] : PA.ANOCOL[r.a] }); });
+const sacDraw = (name, key, fmt) => tipoDraw(name, 'SAC', 'sac', key, fmt);
+sacDraw('ch_sac_qtd', 'qtd', fmtN); sacDraw('ch_sac_rec', 'receita', fmtR);
+tipoDraw('ch_esac_qtd', 'Embaixador SAC', 'esac', 'qtd', fmtN); tipoDraw('ch_esac_rec', 'Embaixador SAC', 'esac', 'receita', fmtR);
+dash.draw('ch_socio', (el) => { const d = dash.data('socio_share'); if (d.status !== 'ok') { el.textContent = d.status === 'error' ? 'Não carregou' : '—'; return; } if (el.firstChild?.nodeType === 3) el.textContent = '';
+  PACH.hbars(el, d.data.map((r) => ({ k: r.socio, v: Number(r.pct), lab: `${PA.pct(r.pct)} · ${PA.num(r.qtd)}`, extra: [PA.brl(r.receita)] })), { fmt: PA.pct, label: 'Parte de cada sócio', colorOf: (r) => r.k.includes('SAC') ? '#607F37' : '#1E6BD6' }); });
+</script>
