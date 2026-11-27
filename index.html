@@ -130,6 +130,8 @@ window.dash = (() => {
 .pa-count span { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
 .pa-k { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; opacity:.85; margin:0 0 6px; }
 .pa-big { font-size:clamp(28px,3.4vw,38px); font-weight:700; letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums; }
+#kpis-fin .pa-card { container-type:inline-size; }
+#kpis-fin .pa-big { white-space:nowrap; font-size:min(38px,11.5cqi); }
 .pa-small { font-size:13px; margin-top:8px; line-height:1.45; font-variant-numeric:tabular-nums; }
 .pa-small b { font-weight:700; }
 .pa-bar { height:10px; border-radius:999px; background:rgba(0,0,0,.15); overflow:hidden; margin-top:10px; display:flex; }
@@ -180,8 +182,8 @@ window.dash = (() => {
 .pa-group .pa-grid > .pa-card:not(.yellow) .pa-small { font-size:12px; }
 .pa-mini { max-width:320px; }
 .pa-circles { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
-.pa-circle { width:112px; height:112px; border-radius:50%; border:1.5px solid var(--sand); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; }
-.pa-circle b { font-size:17px; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+.pa-circle { width:150px; height:150px; border-radius:50%; border:1.5px solid var(--sand); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8px; }
+.pa-circle b { font-size:15px; white-space:nowrap; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
 .pa-circle span { font-size:11px; line-height:1.25; }
 .pa-tiles { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); align-content:start; }
 .pa-tile { background:#FBF4E6; border:1.5px solid var(--ink); border-radius:14px; padding:12px; min-width:0; }
@@ -790,8 +792,9 @@ dash.calc('ads_roi', { inputs: ['anuncios_links', 'anuncios_meta'], title: 'ROI 
 
 // ---------- formatos e cores ----------
 window.PA = (() => {
-  const nf = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }); const brl = (v) => nf.format(v); brl.format = brl;
-  const brlK = (v) => v >= 1e6 ? 'R$ ' + (v / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + ' mi' : v >= 1e3 ? 'R$ ' + Math.round(v / 1e3).toLocaleString('pt-BR') + ' mil' : brl.format(v);
+  const nf = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }); const brl = (v) => nf.format(v); brl.format = brl;
+  const brlK = (v) => brl(v); // valores sempre completos, com centavos
+  const brlAx = (v) => v >= 1e6 ? 'R$ ' + (v / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + ' mi' : v >= 1e3 ? 'R$ ' + Math.round(v / 1e3).toLocaleString('pt-BR') + ' mil' : brl.format(v);
   const num = (v) => Number(v).toLocaleString('pt-BR');
   const pct = (v) => (v * 100).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%';
   const ANOCOL = { 2026: '#EF6351', 2025: '#1E6BD6', 2024: '#6B4BA6' };
@@ -799,7 +802,7 @@ window.PA = (() => {
   const state = { prod: null, ini: null, fim: null, tipo: '', ing: '', lote: '', socio: '', socio2: '', cmp: { cal: new Set(), dia: new Set(), gr: new Set(), canal: new Set(), sac: new Set(), esac: new Set() } };
   const ok = (id) => dash.data(id).status === 'ok';
   const fail = (el, id) => { const s = dash.data(id).status; el.textContent = s === 'error' ? 'Não carregou' : '—'; };
-  return { brl, brlK, num, pct, COL, ANOCOL, state, ok, fail };
+  return { brl, brlK, brlAx, num, pct, COL, ANOCOL, state, ok, fail };
 })();
 
 // ---------- abas ----------
@@ -1074,7 +1077,7 @@ window.PACH = (() => {
 })();
 
 const MAINP = ['Passaporte', 'Avulso Réveillon', 'Combo 31/12 + 02/01'];
-const fmtR = (v, full) => full ? PA.brl.format(v) : PA.brlK(v);
+const fmtR = (v, full) => full ? PA.brl.format(v) : PA.brlAx(v); // eixo abreviado, dica completa
 const fmtN = (v) => PA.num(v);
 const series = (rows, key, xKey, isDate) => { const m = d3.rollup(rows, (v) => d3.sum(v, (r) => Number(r[key])), (r) => r[xKey]);
   let acc = 0; return [...m].sort((a, b) => d3.ascending(a[0], b[0])).map(([x, d]) => { acc += d; return { x: isDate ? new Date(x + 'T00:00:00Z') : Number(x), y: acc, d }; }); };
